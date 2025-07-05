@@ -1,0 +1,13 @@
+@font-face {
+	font-family: 'SegOldLight';
+	src: url('/fonts/SEGOEUIL.TTF') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'SegOld';
+	src: url('/fonts/segoeui.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+}

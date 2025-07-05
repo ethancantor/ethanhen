@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+body {
+	background-image: url('/bliss.jpeg');
+	background-size: cover;
+}
