@@ -1,4 +1,3 @@
-<!-- src/routes/gallery/+page.svelte -->
 <script>
 	import Gallery from '$lib/components/Gallery.svelte';
 	import GalleryImage from '$lib/components/GalleryImage.svelte';

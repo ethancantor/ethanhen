@@ -7,7 +7,6 @@
 		hasTopBar = true,
 		hasMenuBar = true,
 		className = '',
-		title = '',
 		titleIcon = '',
 		active = true
 	} = $props();
@@ -18,11 +17,6 @@
 		<div class="flex w-full flex-row items-start justify-between gap-1">
 			{#if titleIcon}
 				<img src={titleIcon} alt="Title Icon" class="my-auto h-3 w-3" />
-			{/if}
-			{#if title}
-				<span class="my-auto text-sm text-nowrap text-gray-300" style="font-size: 9px;"
-					>{title}</span
-				>
 			{/if}
 			<div class="flex w-full flex-row justify-end">
 				<div class="title-bar-controls">
