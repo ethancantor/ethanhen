@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import MenuBar from './MenuBar.svelte';
 	import TopBar from './TopBar.svelte';
 
@@ -9,6 +9,13 @@
 		className = '',
 		titleIcon = '',
 		active = true
+	}: {
+		children?: any;
+		hasTopBar?: boolean;
+		hasMenuBar?: boolean;
+		className?: string;
+		titleIcon?: string;
+		active?: boolean;
 	} = $props();
 </script>
 
