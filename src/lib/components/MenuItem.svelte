@@ -1,6 +1,5 @@
 <script lang="ts">
-	export let label: string;
-	export let href: string;
+	const { label, href }: { label: string; href: string } = $props();
 </script>
 
 <a {href} class="flex w-fit flex-col items-center rounded-lg p-2">

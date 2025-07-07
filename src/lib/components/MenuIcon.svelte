@@ -1,8 +1,10 @@
 <script lang="ts">
-	export let src: string;
-	export let alt: string = 'Menu Icon';
-	export let label: string;
-	export let className: string = '';
+	const {
+		src,
+		alt = 'Menu Icon',
+		label,
+		className = ''
+	}: { src: string; alt?: string; label: string; className?: string } = $props();
 </script>
 
 <div class="flex flex-row gap-1 {className}">

@@ -1,8 +1,15 @@
 <script lang="ts">
-	export let src: string;
-	export let alt: string = 'Image';
-	export let loading: 'lazy' | 'eager' = 'lazy';
-	export let className: string = 'max-w-[300px]';
+	const {
+		src,
+		alt = 'Image',
+		loading = 'lazy',
+		className = 'max-w-[300px]'
+	}: {
+		src: string;
+		alt?: string;
+		loading?: 'lazy' | 'eager';
+		className?: string;
+	} = $props();
 </script>
 
 <div class="h-fit w-fit">
