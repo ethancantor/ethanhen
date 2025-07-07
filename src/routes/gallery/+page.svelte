@@ -48,7 +48,7 @@
 <Window>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">
-		<div class="grid grid-cols-8 gap-3 p-4">
+		<div class="grid max-h-[75vh] grid-cols-8 gap-3 overflow-y-auto p-4">
 			{#if images && images.length > 0}
 				{#each images as image, index}
 					<FileExplorerImage

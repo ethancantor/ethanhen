@@ -48,7 +48,7 @@
 	<div class="title-bar flex flex-col items-start justify-start">
 		<div class="flex w-full flex-row items-start justify-between gap-1">
 			{#if titleIcon}
-				<img src={titleIcon} alt="Title Icon" class="my-auto h-3 w-3" />
+				<img src={titleIcon} alt="Title Icon" class="my-auto h-3 w-3" loading="eager" />
 			{/if}
 			<div class="flex w-full flex-row justify-end">
 				<div class="title-bar-controls">

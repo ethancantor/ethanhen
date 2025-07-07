@@ -15,7 +15,12 @@
 		}
 	}}
 >
-	<img src={src || '/windowsIcons/Libraries/imageres_1002.ico'} alt={name} class="h-12" />
+	<img
+		src={src || '/windowsIcons/Libraries/imageres_1002.ico'}
+		alt={name}
+		class="h-12"
+		loading="lazy"
+	/>
 	{#if name}
 		<div class="max-w-[10rem] text-center text-sm break-all text-black">
 			{#if name.includes('.')}

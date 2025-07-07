@@ -34,4 +34,10 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<img src="photo_controls.png" alt="Controls" onclick={handleClick} class="h-10 cursor-pointer" />
+<img
+	src="photo_controls.png"
+	alt="Controls"
+	onclick={handleClick}
+	class="h-10 cursor-pointer"
+	loading="eager"
+/>
