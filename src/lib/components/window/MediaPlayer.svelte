@@ -1,5 +1,5 @@
 <script>
-	import Window from './Window.svelte';
+	import { Window } from '$lib';
 </script>
 
 <Window

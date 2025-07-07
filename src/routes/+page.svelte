@@ -1,8 +1,5 @@
 <script>
-	import LeftBar from '$lib/components/LeftBar.svelte';
-	import MainMenuWindowBody from '$lib/components/MainMenuWindowBody.svelte';
-	import MediaPlayer from '$lib/components/MediaPlayer.svelte';
-	import Window from '$lib/components/Window.svelte';
+	import { LeftBar, MainMenuWindowBody, MediaPlayer, Window } from '$lib';
 </script>
 
 <Window className="relative ">

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import MenuBar from './MenuBar.svelte';
-	import TopBar from './TopBar.svelte';
+	import { MenuBar, TopBar } from '$lib';
 
 	let {
 		children,

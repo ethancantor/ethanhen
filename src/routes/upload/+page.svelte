@@ -1,10 +1,8 @@
 <script>
-	import FileUpload from '$lib/components/FileUpload.svelte';
-	import LeftBar from '$lib/components/LeftBar.svelte';
-	import Window from '$lib/components/Window.svelte';
+	import { LeftBar, UploadPage, Window } from '$lib';
 </script>
 
 <Window>
 	<LeftBar />
-	<FileUpload />
+	<UploadPage />
 </Window>

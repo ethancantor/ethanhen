@@ -1,6 +1,6 @@
 <script>
-	import Gallery from '$lib/components/Gallery.svelte';
-	import GalleryImage from '$lib/components/GalleryImage.svelte';
+	import Gallery from '$lib/components/gallery/Gallery.svelte';
+	import GalleryImage from '$lib/components/gallery/GalleryImage.svelte';
 
 	/** @type {import('./$types').PageData} */
 	export let data;

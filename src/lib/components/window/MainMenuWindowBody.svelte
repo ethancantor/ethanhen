@@ -1,5 +1,5 @@
 <script>
-	import MenuItem from './MenuItem.svelte';
+	import { MenuItem } from '$lib';
 </script>
 
 <div class="flex h-full w-full flex-col p-2">
