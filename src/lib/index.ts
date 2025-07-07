@@ -2,8 +2,6 @@
 
 // gallery
 export { default as FullSizeImage } from './components/gallery/FullSizeImage.svelte';
-export { default as Gallery } from './components/gallery/Gallery.svelte';
-export { default as GalleryImage } from './components/gallery/GalleryImage.svelte';
 export { default as PhotoControls } from './components/gallery/PhotoControls.svelte';
 
 // uploads
