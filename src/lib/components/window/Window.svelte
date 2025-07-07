@@ -1,24 +1,40 @@
 <script lang="ts">
 	import { MenuBar, TopBar } from '$lib';
+	import type { Snippet } from 'svelte';
+	import MenuBarItem from './MenuBarItem.svelte';
 
 	let {
 		children,
 		hasTopBar = true,
 		hasMenuBar = true,
 		className = '',
+		bodyStyle = '',
 		titleIcon = '',
-		active = true
+		active = true,
+		style = '',
+		onMinimizeClick,
+		onMaximizeClick,
+		onCloseClick,
+		CustomMenuBar,
+		bodyDirection = 'row'
 	}: {
-		children?: any;
+		children?: Snippet;
 		hasTopBar?: boolean;
 		hasMenuBar?: boolean;
 		className?: string;
+		bodyStyle?: string;
 		titleIcon?: string;
 		active?: boolean;
+		style?: string;
+		onMinimizeClick?: () => void;
+		onMaximizeClick?: () => void;
+		onCloseClick?: () => void;
+		CustomMenuBar?: Snippet;
+		bodyDirection?: 'row' | 'column';
 	} = $props();
 </script>
 
-<div class="window {active ? 'active' : ''} h-fit w-full max-w-[1000px] {className}">
+<div class="window {active ? 'active' : ''} h-fit w-full max-w-[1000px] {className}" {style}>
 	<div class="title-bar flex flex-col items-start justify-start">
 		<div class="flex w-full flex-row items-start justify-between gap-1">
 			{#if titleIcon}
@@ -26,25 +42,31 @@
 			{/if}
 			<div class="flex w-full flex-row justify-end">
 				<div class="title-bar-controls">
-					<button aria-label="Minimize"></button>
-					<button aria-label="Maximize"></button>
-					<button aria-label="Close"></button>
+					<button aria-label="Minimize" onclick={onMinimizeClick}></button>
+					<button aria-label="Maximize" onclick={onMaximizeClick}></button>
+					<button aria-label="Close" onclick={onCloseClick}></button>
 				</div>
 			</div>
 		</div>
 		{#if hasTopBar}<TopBar />{/if}
-		{#if hasMenuBar}<MenuBar>
-				<li role="menuitem" tabindex="0" class="flex flex-row items-center gap-2">
-					Organize <div style="font-size:8px;">▼</div>
-				</li>
-				<li role="menuitem" tabindex="0" class="flex flex-row items-center gap-2">
-					Share with <div style="font-size:8px;">▼</div>
-				</li>
-				<li role="menuitem" tabindex="0">New Folder</li>
-			</MenuBar>
+		{#if hasMenuBar}
+			{#if CustomMenuBar}
+				{@render CustomMenuBar()}
+			{:else}
+				<MenuBar>
+					<MenuBarItem hasArrow>Organize</MenuBarItem>
+					<MenuBarItem hasArrow>Share with</MenuBarItem>
+					<MenuBarItem>New Folder</MenuBarItem>
+				</MenuBar>
+			{/if}
 		{/if}
 	</div>
-	<div class="window-body flex flex-row">
-		{@render children()}
+	<div
+		class="window-body flex {bodyDirection === 'row' ? 'flex-row' : 'flex-col'}"
+		style={bodyStyle}
+	>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 </div>

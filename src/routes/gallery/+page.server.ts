@@ -1,5 +1,6 @@
+
 export async function load({ fetch }) {
-    let imageFiles = [];
+    let images: string[] = [];
 
     try {
         // Fetch image URLs from your custom API endpoint
@@ -8,15 +9,13 @@ export async function load({ fetch }) {
         if (!response.ok) {
             console.error(`Failed to fetch images from /api/images: ${response.status} ${response.statusText}`);
         } else {
-            imageFiles = await response.json();
+            images = await response.json();
         }
     } catch (e) {
         console.error('Error fetching images in load function:', e);
     }
 
     return {
-        props: {
-            images: imageFiles
-        }
+        images
     };
 }
