@@ -13,7 +13,6 @@ export { default as UploadWithFiles } from './components/uploads/UploadWithFiles
 
 // window
 export { default as LeftBar } from './components/window/LeftBar.svelte';
-export { default as MainMenuWindowBody } from './components/window/MainMenuWindowBody.svelte';
 export { default as MediaPlayer } from './components/window/MediaPlayer.svelte';
 export { default as MenuBar } from './components/window/MenuBar.svelte';
 export { default as MenuBarItem } from './components/window/MenuBarItem.svelte';
@@ -21,4 +20,7 @@ export { default as MenuIcon } from './components/window/MenuIcon.svelte';
 export { default as MenuItem } from './components/window/MenuItem.svelte';
 export { default as TopBar } from './components/window/TopBar.svelte';
 export { default as Window } from './components/window/Window.svelte';
+export { default as WindowBody } from './components/window/WindowBody.svelte';
 
+// shared
+export { default as FileExplorerImage } from './components/shared/FileExplorerImage.svelte';

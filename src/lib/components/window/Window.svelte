@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { MenuBar, TopBar } from '$lib';
+	import { MenuBar, MenuBarItem, TopBar } from '$lib';
 	import type { Snippet } from 'svelte';
-	import MenuBarItem from './MenuBarItem.svelte';
 
 	let {
 		children,
@@ -16,7 +15,9 @@
 		onMaximizeClick,
 		onCloseClick,
 		CustomMenuBar,
-		bodyDirection = 'row'
+		bodyDirection = 'row',
+		onClick,
+		id
 	}: {
 		children?: Snippet;
 		hasTopBar?: boolean;
@@ -31,10 +32,19 @@
 		onCloseClick?: () => void;
 		CustomMenuBar?: Snippet;
 		bodyDirection?: 'row' | 'column';
+		onClick?: (event: MouseEvent) => void;
+		id?: string;
 	} = $props();
 </script>
 
-<div class="window {active ? 'active' : ''} h-fit w-full max-w-[1000px] {className}" {style}>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	class="window {active ? 'active' : ''} h-fit w-full max-w-[1000px] {className}"
+	{style}
+	onclick={onClick}
+	{id}
+>
 	<div class="title-bar flex flex-col items-start justify-start">
 		<div class="flex w-full flex-row items-start justify-between gap-1">
 			{#if titleIcon}

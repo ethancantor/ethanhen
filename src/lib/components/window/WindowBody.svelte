@@ -1,12 +1,16 @@
-<script>
-	import { MenuItem } from '$lib';
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+	const { title, subtitle, children }: { title?: string; subtitle?: string; children?: Snippet } =
+		$props();
 </script>
 
 <div class="flex h-full w-full flex-col p-2">
 	<div class="flex h-fit w-full flex-row items-start justify-between border-b-1 border-gray-300">
 		<div class="mb-2 flex flex-col">
-			<span class="text-lg font-light text-[#077148]"> Documents library </span>
-			<span>Includes: <span class="text-[#1672cc]"> 2 locations </span> </span>
+			<span class="text-lg font-light text-[#077148]"> {title} </span>
+			{#if subtitle}
+				<span>Includes: <span class="text-[#1672cc]"> {subtitle}</span> </span>
+			{/if}
 		</div>
 		<div class="flex h-10 flex-row items-center gap-2">
 			<span>Arrange by:</span>
@@ -15,8 +19,8 @@
 		</div>
 	</div>
 	<div class="flex flex-row gap-8">
-		<MenuItem label="gallery" href="/gallery" />
-		<MenuItem label="upload" href="/upload" />
-		<MenuItem label="awesome stuff" href="/awesome" />
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 </div>

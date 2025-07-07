@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FullSizeImage, Gallery, GalleryImage } from '$lib';
+	import { FileExplorerImage, FullSizeImage, LeftBar, Window, WindowBody } from '$lib';
 
 	const { data } = $props();
 
@@ -22,6 +22,22 @@
 			selectedImage--;
 		}
 	}
+
+	let modalContentRef = $state<HTMLDivElement | null>(null);
+
+	function handelModalClick(event: MouseEvent) {
+		if (modalContentRef && !modalContentRef.contains(event.target as Node)) {
+			clearImage();
+		}
+	}
+
+	$effect(() => {
+		if (modalContentRef) {
+			console.log('Modal content reference is set:', modalContentRef);
+		} else {
+			console.log('Modal content reference is not set.');
+		}
+	});
 </script>
 
 <svelte:head>
@@ -29,39 +45,43 @@
 	<meta name="description" content="A dynamic image gallery built with SvelteKit." />
 </svelte:head>
 
-<div class="window active h-fit w-[90vw]">
-	<div class="title-bar">
-		<div class="title-bar-text">
-			{selectedImage || 'File Explorer'}
+<Window>
+	<LeftBar />
+	<WindowBody title="Picture library" subtitle="Pictures">
+		<div class="grid grid-cols-8 gap-3 p-4">
+			{#if images && images.length > 0}
+				{#each images as image, index}
+					<FileExplorerImage
+						src={image}
+						name={`Img ${index + 1}`}
+						onClick={() => {
+							selectedImage = index;
+						}}
+					/>
+				{/each}
+			{:else}
+				<p class="">No images found in the gallery.</p>
+			{/if}
 		</div>
-		<div class="title-bar-controls">
-			<button aria-label="Close"></button>
-		</div>
-	</div>
-	<Gallery>
-		{#if images && images.length > 0}
-			{#each images as image, index}
-				<GalleryImage
-					src={image}
-					alt={`Gallery image ${index + 1}`}
-					onClick={() => {
-						selectedImage = index;
-					}}
-				/>
-			{/each}
-		{:else}
-			<p class="">No images found in the gallery.</p>
-		{/if}
-	</Gallery>
-</div>
+	</WindowBody>
+</Window>
 
 {#if selectedImage !== -1}
-	<FullSizeImage
-		src={images[selectedImage]}
-		alt="Full Size Image"
-		className="max-h-[80vh] max-w-[90vw]"
-		{clearImage}
-		{advanceImage}
-		{retreatImage}
-	/>
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div
+		class="bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center"
+		onclick={handelModalClick}
+	>
+		<div class="h-fit w-fit" bind:this={modalContentRef}>
+			<FullSizeImage
+				src={images[selectedImage]}
+				alt="Full Size Image"
+				className="max-h-[80vh] max-w-[90vw]"
+				{clearImage}
+				{advanceImage}
+				{retreatImage}
+			/>
+		</div>
+	</div>
 {/if}

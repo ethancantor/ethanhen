@@ -32,8 +32,6 @@
 {/snippet}
 
 <Window
-	style="position: fixed; top: 0; right: 0; left: 0; z-index: 10;"
-	className="mx-auto"
 	onCloseClick={clearImage}
 	onMinimizeClick={clearImage}
 	CustomMenuBar={FullSizeImageMenuBar}

@@ -1,10 +1,14 @@
 <script>
-	import { LeftBar, MainMenuWindowBody, MediaPlayer, Window } from '$lib';
+	import { LeftBar, MediaPlayer, MenuItem, Window, WindowBody } from '$lib';
 </script>
 
-<Window className="relative ">
+<Window className="relative">
 	<LeftBar />
-	<MainMenuWindowBody />
+	<WindowBody title="Documents library" subtitle="2 locations">
+		<MenuItem label="gallery" href="/gallery" />
+		<MenuItem label="upload" href="/upload" />
+		<MenuItem label="awesome stuff" href="/awesome" />
+	</WindowBody>
 	<div class="absolute right-0 bottom-0 -z-10 h-fit w-fit translate-x-[75%] translate-y-[90%]">
 		<MediaPlayer />
 	</div>
