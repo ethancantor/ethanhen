@@ -1,5 +1,5 @@
 <script lang="ts">
-	const { onClick, src, name }: { onClick: (name: string) => void; src: string; name?: string } =
+	const { onClick, src, name }: { onClick: (name: string) => void; src?: string; name?: string } =
 		$props();
 
 	const NUMBER_OF_CHARACTERS_TO_SHOW = 10;
@@ -16,7 +16,7 @@
 	}}
 >
 	<img
-		src={src || '/windowsIcons/Libraries/imageres_1002.ico'}
+		src={src || '/windowsIcons/Standard Folders/imageres_3.ico'}
 		alt={name}
 		class="h-12"
 		loading="lazy"

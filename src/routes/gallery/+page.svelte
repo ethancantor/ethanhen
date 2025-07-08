@@ -1,11 +1,16 @@
 <script lang="ts">
+	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 	import { FileExplorerImage, FullSizeImage, LeftBar, Window, WindowBody } from '$lib';
 
-	const { data } = $props();
+	let { data } = $props();
 
-	const images: string[] = data.images;
+	let images = $derived(data.files.images.sort((a, b) => a.localeCompare(b)));
+	let folders = $derived(data.files.folders.sort((a, b) => a.localeCompare(b)));
+	let files = $derived([...images, ...folders].sort((a, b) => a.localeCompare(b)));
 
 	let selectedImage = $state(-1);
+	let path = $derived(page.url.searchParams.get('path') || '');
 
 	function clearImage() {
 		selectedImage = -1;
@@ -31,13 +36,27 @@
 		}
 	}
 
-	$effect(() => {
-		if (modalContentRef) {
-			console.log('Modal content reference is set:', modalContentRef);
-		} else {
-			console.log('Modal content reference is not set.');
-		}
-	});
+	async function handleFolderClick(folderName: string) {
+		const currentLocation = page.url;
+		const currentPath = currentLocation.searchParams.get('path') || '';
+
+		const nextPath = `/gallery?path=${encodeURIComponent(`${currentPath}/${folderName}`)}`;
+
+		await invalidateAll();
+
+		// update state
+		path = nextPath;
+
+		// nav to new path
+		await goto(nextPath);
+	}
+
+	let topBarLocation = $derived([
+		'C:',
+		'Users',
+		'ethanhen',
+		...decodeURIComponent(path.replace('/gallery?path=', '')).split('/').filter(Boolean)
+	]);
 </script>
 
 <svelte:head>
@@ -45,22 +64,24 @@
 	<meta name="description" content="A dynamic image gallery built with SvelteKit." />
 </svelte:head>
 
-<Window>
+<Window {topBarLocation}>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">
 		<div class="grid max-h-[75vh] grid-cols-8 gap-3 overflow-y-auto p-4">
-			{#if images && images.length > 0}
-				{#each images as image, index}
-					<FileExplorerImage
-						src={image}
-						name={`Img ${index + 1}`}
-						onClick={() => {
-							selectedImage = index;
-						}}
-					/>
+			{#if files && files.length > 0}
+				{#each files as file, index}
+					{#if images.includes(file)}
+						<FileExplorerImage
+							src={file}
+							name={`Img ${index + 1}`}
+							onClick={() => {
+								selectedImage = index;
+							}}
+						/>
+					{:else if folders.includes(file)}
+						<FileExplorerImage name={file} onClick={() => handleFolderClick(file)} />
+					{/if}
 				{/each}
-			{:else}
-				<p class="">No images found in the gallery.</p>
 			{/if}
 		</div>
 	</WindowBody>
@@ -75,7 +96,7 @@
 	>
 		<div class="h-fit w-fit" bind:this={modalContentRef}>
 			<FullSizeImage
-				src={images[selectedImage]}
+				src={files[selectedImage - 1]}
 				alt="Full Size Image"
 				className="max-h-[80vh] max-w-[90vw]"
 				{clearImage}

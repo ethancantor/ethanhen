@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
 
-const UPLOAD_DIR = path.join(process.cwd(), 'uploaded_images');
+const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
 
 function getImageContentType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
@@ -28,7 +28,7 @@ function getImageContentType(filename: string): string {
 }
 
 export async function GET({ params }: { params: { image: string } }): Promise<Response> {
-	const filename = params.image;
+	const filename = decodeURIComponent(params.image);
 	const imagePath = path.join(UPLOAD_DIR, filename);
 
 	try {
@@ -57,4 +57,6 @@ export async function GET({ params }: { params: { image: string } }): Promise<Re
 		}
 		throw error(500, { message: 'Failed to serve image.' });
 	}
+
+
 }

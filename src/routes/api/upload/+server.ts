@@ -8,12 +8,12 @@ export async function POST({ request }: { request: Request }) {
         return new Response("No files uploaded", { status: 400 });
     }
 
-    const uploadDir = join(process.cwd(), 'uploaded_images');
+    const uploadDir = join(process.cwd(), 'uploads');
 
-    const currentFiles = import.meta.glob('/uploaded_images/*', { eager: true });
+    const currentFiles = import.meta.glob('/uploads/*', { eager: true });
     const currentFilesKeys = Object.keys(currentFiles).map(fileName =>
         fileName
-            .replace(/\/uploaded_images\//g, '')
+            .replace(/\/uploads\//g, '')
 
     );
 

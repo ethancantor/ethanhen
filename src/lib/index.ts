@@ -1,5 +1,6 @@
 // place files you want to import through the `$lib` alias in this folder.
 
+// components
 // gallery
 export { default as FullSizeImage } from './components/gallery/FullSizeImage.svelte';
 export { default as PhotoControls } from './components/gallery/PhotoControls.svelte';
@@ -22,3 +23,6 @@ export { default as WindowBody } from './components/window/WindowBody.svelte';
 
 // shared
 export { default as FileExplorerImage } from './components/shared/FileExplorerImage.svelte';
+
+// utils
+export { exists } from './utils/fs-extention';
