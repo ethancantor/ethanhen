@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { DefaultUpload, UploadWithFiles } from '$lib';
+	import { DefaultUpload, MenuBar, UploadWithFiles } from '$lib';
 	import { uploadFile } from '$lib/utils/upload-funcs';
 
 	let files: File[] = $state([]);

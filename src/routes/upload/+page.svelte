@@ -2,7 +2,7 @@
 	import { LeftBar, UploadPage, Window } from '$lib';
 </script>
 
-<Window>
+<Window hasMenuBar={false}>
 	<LeftBar />
 	<UploadPage />
 </Window>

@@ -4,7 +4,6 @@ export async function load({ fetch, url }) {
 	const params = url.searchParams.get('path');
 
 	try {
-
 		const path = '/api/upload' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
 		const response = await fetch(path);
 
@@ -17,9 +16,6 @@ export async function load({ fetch, url }) {
 	} catch (e) {
 		console.error('Error fetching folders in load function:', e);
 	}
-
-	console.log('Fetched folders:', folders);
-
 
 	return { folders };
 }
