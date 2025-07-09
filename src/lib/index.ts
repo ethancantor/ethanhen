@@ -25,4 +25,5 @@ export { default as WindowBody } from './components/window/WindowBody.svelte';
 export { default as FileExplorerImage } from './components/shared/FileExplorerImage.svelte';
 
 // utils
-export { exists } from './utils/fs-extention';
+export { exists } from './utils/server/fs-extention';
+export { uploadFile } from './utils/client/upload-funcs';
