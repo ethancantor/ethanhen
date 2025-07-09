@@ -1,4 +1,8 @@
+import { exists } from "$lib";
+import { UPLOAD_DIR } from "$lib/types/api";
+import { error, json } from "@sveltejs/kit";
 import busboy from "busboy";
+import fs from "fs/promises";
 import { createWriteStream } from "node:fs";
 import { join } from "node:path";
 import { Readable } from "node:stream";
@@ -8,14 +12,18 @@ export async function POST({ request }: { request: Request }) {
         return new Response("No files uploaded", { status: 400 });
     }
 
-    const uploadDir = join(process.cwd(), 'uploads');
+    const headers = request.headers.get('x-upload-dir');
 
-    const currentFiles = import.meta.glob('/uploads/*', { eager: true });
-    const currentFilesKeys = Object.keys(currentFiles).map(fileName =>
-        fileName
-            .replace(/\/uploads\//g, '')
+    const uploadDir = join(process.cwd(), 'uploads', headers || '');
 
-    );
+    const doesExist = await exists(uploadDir);
+    if (!doesExist) {
+        console.error(`Upload directory does not exist: ${uploadDir}`);
+        return new Response('Upload directory does not exist.', { status: 500 });
+    }
+
+    const currentFiles = await fs.readdir(uploadDir, { withFileTypes: true });
+    const currentFilesKeys = currentFiles.map(file => file.name);
 
     return new Promise((resolve, reject) => {
         // Convert Fetch API Headers to plain object for busboy
@@ -39,7 +47,6 @@ export async function POST({ request }: { request: Request }) {
             }
 
             const filepath = join(uploadDir, filename);
-            console.log(`Uploading: ${filepath}`);
 
             const writeStream = createWriteStream(filepath);
             file.pipe(writeStream);
@@ -85,9 +92,32 @@ export async function POST({ request }: { request: Request }) {
                     reader.releaseLock();
                 }
             })());
+
             nodeStream.pipe(bb);
         } else {
             reject(new Response('Request body is missing.', { status: 400 }));
         }
     });
+}
+
+export async function GET({ url }: { url: URL }) {
+    await fs.mkdir(UPLOAD_DIR, { recursive: true });
+
+    const paramPath = url.searchParams.get('path');
+    const fullPath = paramPath ? join(UPLOAD_DIR, decodeURIComponent(paramPath)) : UPLOAD_DIR;
+
+    if (!await exists(fullPath)) {
+        throw error(404, { message: `Path "${fullPath}" does not exist.` });
+    }
+
+    try {
+
+        const folders = await fs.readdir(fullPath, { withFileTypes: true });
+        const folderNames = folders.filter(dir => dir.isDirectory()).map(dir => dir.name);
+
+        return json({ folders: folderNames }, { status: 200 });
+    } catch (e) {
+        console.error(`Error reading image directory "${UPLOAD_DIR}":`, e);
+        throw error(500, { message: 'Failed to retrieve images.' });
+    }
 }

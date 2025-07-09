@@ -1,19 +1,31 @@
 <script lang="ts">
+	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
+	import { WindowBody } from '$lib';
+	import FileExplorerImage from '../shared/FileExplorerImage.svelte';
+
 	const { handleFileDrop }: { handleFileDrop: (event: DragEvent) => void } = $props();
+	const { folders } = $derived(page.data);
+
+	async function handleFolderClick(folderName: string) {
+		const currentLocation = page.url;
+		const currentPath = currentLocation.searchParams.get('path') || '';
+
+		const nextPath = `/upload?path=${encodeURIComponent(`${currentPath}/${folderName}`)}`;
+		await invalidateAll();
+		// nav to new path
+		await goto(nextPath);
+	}
 </script>
 
 <form
-	class="flex h-96 w-full cursor-pointer flex-row items-center justify-center p-2"
+	class="h-96 w-full cursor-pointer"
 	ondrop={handleFileDrop}
 	ondragover={(e) => e.preventDefault()}
 >
-	<img
-		src={'/windowsIcons/Standard Folders/imageres_3.ico'}
-		alt={'upload files'}
-		class="h-12 w-12"
-		id={'upload files'}
-	/>
-	<label class="cursor-pointer text-center text-xs text-black" for={'upload files'}>
-		drop files to upload
-	</label>
+	<WindowBody title="Drop Files to Upload" subtitle="Or click on a folder to navigate">
+		{#each folders as folder}
+			<FileExplorerImage name={folder} onClick={() => handleFolderClick(folder)} />
+		{/each}
+	</WindowBody>
 </form>

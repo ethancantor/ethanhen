@@ -3,9 +3,7 @@ import { exists } from '$lib';
 import { error, json } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
-
+import { UPLOAD_DIR } from '$lib/types/api.js';
 
 export async function GET({ url }) {
 
@@ -21,7 +19,6 @@ export async function GET({ url }) {
 
 	try {
 		const files = await fs.readdir(fullPath, { withFileTypes: true });
-
 
 		const imageFiles = files
 			.filter((file) => /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i.test(file.name))

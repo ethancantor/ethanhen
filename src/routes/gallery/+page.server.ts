@@ -1,4 +1,4 @@
-import type { ImageAPIResponse } from "$lib/types/image-api-types.js";
+import type { ImageAPIResponse } from "$lib/types/api.js";
 
 export async function load({ fetch, url }) {
 	let files: ImageAPIResponse = { images: [], folders: [] };

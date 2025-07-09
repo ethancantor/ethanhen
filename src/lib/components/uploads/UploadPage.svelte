@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { DefaultUpload, UploadWithFiles } from '$lib';
-	import { handleUploadClick } from './UploadFunction';
+	import { uploadFile } from '$lib/utils/upload-funcs';
 
 	let files: File[] = $state([]);
 	let finishedPercent = $state(0);
+
+	const searchParams = page.url.searchParams.get('path');
 
 	function handleFileDrop(event: DragEvent) {
 		event.preventDefault();
@@ -19,8 +22,7 @@
 	function handleFileUpload() {
 		finishedPercent = 0;
 		const uploadPromises = files.map((file) =>
-			handleUploadClick(file, (progress) => {
-				console.log(finishedPercent);
+			uploadFile(file, searchParams || '', (progress) => {
 				finishedPercent += Math.round(progress / (files.length - 1));
 			})
 		);

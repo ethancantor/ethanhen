@@ -1,5 +1,5 @@
 
-export function handleUploadClick(file: File, progressCallback: (percent: number) => void) {
+export function uploadFile(file: File, uploadDir: string, progressCallback: (percent: number) => void) {
     if (!file) {
         console.log('No files to upload');
         return;
@@ -10,14 +10,13 @@ export function handleUploadClick(file: File, progressCallback: (percent: number
 
         xhr.upload.addEventListener('progress', (event) => {
             if (event.lengthComputable) {
-                const percentComplete = (event.loaded / event.total) * 100;
-                progressCallback(percentComplete);
-                console.log(`Upload progress: ${percentComplete.toFixed(2)}%`);
+                progressCallback((event.loaded / event.total) * 100);
             }
         });
 
         xhr.open('POST', '/api/upload');
         xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('x-upload-dir', uploadDir);
 
         xhr.onload = () => {
             if (xhr.status === 200) {

@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+import { UPLOAD_DIR } from '$lib/types/api.js';
 
 function getImageContentType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
