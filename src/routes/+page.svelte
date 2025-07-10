@@ -7,7 +7,7 @@
 	<WindowBody title="Documents library" subtitle="2 locations">
 		<MenuItem label="gallery" href="/gallery" />
 		<MenuItem label="upload" href="/upload" />
-		<MenuItem label="awesome stuff" href="/awesome" />
+		<MenuItem label="awesome stuff" href="/console" />
 	</WindowBody>
 	<div class="absolute right-0 bottom-0 -z-10 h-fit w-fit translate-x-[75%] translate-y-[90%]">
 		<MediaPlayer />

@@ -1,34 +1,16 @@
 <script lang="ts">
-	import Window from '../window/Window.svelte';
+	import { Window } from '$lib';
+	import { onSubmit } from '$lib/utils/client/console-options';
 
-	const { handleSubmit }: { handleSubmit?: (password: string) => Promise<Response> } = $props();
-
-	let passwordInput = $state('');
-	let error = $state<string | null>(null);
+	let input = $state('');
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
-			handlePasswordSubmit();
+			onSubmit(input);
 		} else if (event.key === 'Backspace') {
-			passwordInput = passwordInput.slice(0, -1);
+			input = input.slice(0, -1);
 		} else if (event.key.length === 1) {
-			passwordInput += event.key;
-		}
-	}
-
-	async function handlePasswordSubmit() {
-		if (!handleSubmit) {
-			console.error('handleSubmit function is not provided');
-			return;
-		}
-		const response = await handleSubmit(passwordInput);
-		if (response.ok) {
-			console.log('Password accepted');
-			error = null;
-		} else {
-			error = 'incorrect password. click this message to see the hint and try again.';
-			passwordInput = '';
-			return false;
+			input += event.key;
 		}
 	}
 </script>
@@ -49,26 +31,13 @@
 		>
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />
-			{#if !error}
-				C:\Users\ethanhen>login <br />
-				please enter password:
-			{:else}
-				C:\Users\ethanhen>error<br />
-				<a href="https://www.youtube.com/watch?v=XlzJi9-87l4">{error} </a> <br />
-			{/if}
-			{passwordInput
-				.split('')
-				.map((_) => '*')
-				.join('')}<span class="blinking-text">_</span>
+			C:\Users\ethanhen>
+			{input}<span class="blinking-text">_</span>
 		</div>
 	</Window>
 </div>
 
 <style>
-	a {
-		color: white;
-	}
-
 	@font-face {
 		font-family: 'Console';
 		src: url('/fonts/TerminalVector.ttf') format('truetype');
