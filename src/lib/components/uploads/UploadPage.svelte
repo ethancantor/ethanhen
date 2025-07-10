@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { DefaultUpload, MenuBar, UploadWithFiles } from '$lib';
-	import { uploadFile } from '$lib/utils/upload-funcs';
+	import { DefaultUpload, UploadWithFiles } from '$lib';
+	import { uploadFile } from '$lib';
 
 	let files: File[] = $state([]);
 	let finishedPercent = $state(0);

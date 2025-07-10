@@ -3,8 +3,14 @@
 	const {
 		title,
 		subtitle,
+		className = '',
 		children
-	}: { title?: string; subtitle?: string | Snippet; children?: Snippet } = $props();
+	}: {
+		title?: string;
+		subtitle?: string | Snippet;
+		children?: Snippet;
+		className?: string;
+	} = $props();
 </script>
 
 <div class="flex h-full w-full flex-col p-2">
@@ -24,7 +30,7 @@
 			<span style="font-size:8px">▼</span>
 		</div>
 	</div>
-	<div class="flex flex-row gap-8">
+	<div class="flex flex-row gap-8 {className}">
 		{#if children}
 			{@render children()}
 		{/if}

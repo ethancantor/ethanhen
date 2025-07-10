@@ -96,7 +96,7 @@
 	>
 		<div class="h-fit w-fit" bind:this={modalContentRef}>
 			<FullSizeImage
-				src={files[selectedImage - 1]}
+				src={files[selectedImage]}
 				alt="Full Size Image"
 				className="max-h-[80vh] max-w-[90vw]"
 				{clearImage}

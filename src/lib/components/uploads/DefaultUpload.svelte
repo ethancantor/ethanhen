@@ -26,19 +26,26 @@
 </script>
 
 {#snippet CreateFolder()}
-	<button onclick={() => (showCreateFolderModal = true)}>New Folder</button>
+	<button
+		onclick={(e: MouseEvent) => {
+			e.preventDefault();
+			showCreateFolderModal = true;
+		}}>New Folder</button
+	>
 {/snippet}
 
 {#if showCreateFolderModal}
 	<CreateFolderModal {closeModal} />
 {/if}
 
+{console.log('Folders:', folders)}
+
 <form
 	class="h-96 w-full cursor-pointer"
 	ondrop={handleFileDrop}
 	ondragover={(e) => e.preventDefault()}
 >
-	<WindowBody title="Drop Files to Upload" subtitle={CreateFolder}>
+	<WindowBody title="Drop Files to Upload" subtitle={CreateFolder} className="pt-2">
 		{#each folders as folder}
 			<FileExplorerImage name={folder} onClick={() => handleFolderClick(folder)} />
 		{/each}
