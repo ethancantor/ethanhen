@@ -22,7 +22,7 @@
 			console.log('Password accepted');
 			error = null;
 		} else {
-			error = 'Incorrect password. Please try again.';
+			error = 'incorrect password. click this message to see hint and try again.';
 			passwordInput = '';
 			return false;
 		}
@@ -49,7 +49,8 @@
 				C:\Users\ethanhen>login <br />
 				please enter password:
 			{:else}
-				C:\Users\ethanhen>error<br />{error} <br />
+				C:\Users\ethanhen>error<br />
+				<a href="https://www.youtube.com/watch?v=XlzJi9-87l4">{error} </a> <br />
 			{/if}
 			{passwordInput
 				.split('')
@@ -60,6 +61,10 @@
 </div>
 
 <style>
+	a {
+		color: white;
+	}
+
 	@font-face {
 		font-family: 'Console';
 		src: url('/fonts/TerminalVector.ttf') format('truetype');
