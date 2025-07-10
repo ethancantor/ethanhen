@@ -18,7 +18,8 @@
 		bodyDirection = 'row',
 		onClick,
 		id,
-		topBarLocation = ['C:', 'Users', 'ethanhen']
+		topBarLocation = ['C:', 'Users', 'ethanhen'],
+		title
 	}: {
 		children?: Snippet;
 		hasTopBar?: boolean;
@@ -36,6 +37,7 @@
 		onClick?: (event: MouseEvent) => void;
 		id?: string;
 		topBarLocation?: string[];
+		title?: string;
 	} = $props();
 </script>
 
@@ -50,7 +52,10 @@
 	<div class="title-bar flex flex-col items-start justify-start">
 		<div class="flex w-full flex-row items-start justify-between gap-1">
 			{#if titleIcon}
-				<img src={titleIcon} alt="Title Icon" class="my-auto h-3 w-3" loading="eager" />
+				<img src={titleIcon} alt="Title Icon" class="my-auto mt-[6px] h-3 w-3" loading="eager" />
+			{/if}
+			{#if title}
+				<span class="mt-1 text-nowrap" style="font-size:10px;">{title}</span>
 			{/if}
 			<div class="flex w-full flex-row justify-end">
 				<div class="title-bar-controls">

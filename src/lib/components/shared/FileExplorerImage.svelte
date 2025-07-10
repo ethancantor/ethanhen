@@ -5,9 +5,11 @@
 	const NUMBER_OF_CHARACTERS_TO_SHOW = 10;
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="flex h-fit w-fit cursor-pointer flex-col items-center"
+	tabindex="0"
 	onclick={() => onClick?.(name || 'File')}
 	onkeydown={(e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
@@ -33,3 +35,6 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+</style>

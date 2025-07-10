@@ -56,6 +56,4 @@ export async function GET({ params }: { params: { image: string } }): Promise<Re
 		}
 		throw error(500, { message: 'Failed to serve image.' });
 	}
-
-
 }

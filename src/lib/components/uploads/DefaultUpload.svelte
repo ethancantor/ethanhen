@@ -2,13 +2,12 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { WindowBody } from '$lib';
+	import { getFolderToggleContext } from '$lib/utils/client/context';
+	import FileExplorerCreator from '../shared/FileExplorerCreator.svelte';
 	import FileExplorerImage from '../shared/FileExplorerImage.svelte';
-	import CreateFolderModal from './CreateFolderModal.svelte';
 
 	const { handleFileDrop }: { handleFileDrop: (event: DragEvent) => void } = $props();
 	const { folders } = $derived(page.data);
-
-	let showCreateFolderModal = $state(false);
 
 	async function handleFolderClick(folderName: string) {
 		const currentLocation = page.url;
@@ -20,32 +19,18 @@
 		await goto(nextPath);
 	}
 
-	function closeModal() {
-		showCreateFolderModal = false;
-	}
+	const createFolderToggle = getFolderToggleContext();
 </script>
-
-{#snippet CreateFolder()}
-	<button
-		onclick={(e: MouseEvent) => {
-			e.preventDefault();
-			showCreateFolderModal = true;
-		}}>New Folder</button
-	>
-{/snippet}
-
-{#if showCreateFolderModal}
-	<CreateFolderModal {closeModal} />
-{/if}
-
-{console.log('Folders:', folders)}
 
 <form
 	class="h-96 w-full cursor-pointer"
 	ondrop={handleFileDrop}
 	ondragover={(e) => e.preventDefault()}
 >
-	<WindowBody title="Drop Files to Upload" subtitle={CreateFolder} className="pt-2">
+	<WindowBody title="Drop Files to Upload" subtitle="Create folder above" className="pt-2">
+		{#if createFolderToggle.isOpen()}
+			<FileExplorerCreator />
+		{/if}
 		{#each folders as folder}
 			<FileExplorerImage name={folder} onClick={() => handleFolderClick(folder)} />
 		{/each}
