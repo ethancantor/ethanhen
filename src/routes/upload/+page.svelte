@@ -4,7 +4,6 @@
 
 	function handleNewFolder() {
 		createFolderToggle = !createFolderToggle;
-		console.log('New Folder Clicked', createFolderToggle);
 	}
 
 	let createFolderToggle = $state(false);

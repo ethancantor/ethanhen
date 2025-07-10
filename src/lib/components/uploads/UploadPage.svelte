@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { DefaultUpload, UploadWithFiles } from '$lib';
 	import { uploadFile } from '$lib';
+	import PasswordModal from './PasswordModal.svelte';
 
 	let files: File[] = $state([]);
 	let finishedPercent = $state(0);
@@ -29,6 +30,13 @@
 		Promise.all(uploadPromises);
 	}
 </script>
+
+<PasswordModal
+	handleSubmit={(password: string) =>
+		password === 'abcd'
+			? new Promise<Response>((resolve) => resolve(new Response('bottom text', { status: 200 })))
+			: new Promise<Response>((resolve) => resolve(new Response('Unauthorized', { status: 401 })))}
+/>
 
 {#if files.length > 0}
 	<UploadWithFiles

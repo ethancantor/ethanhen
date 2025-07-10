@@ -1,15 +1,30 @@
 <script lang="ts">
 	import Window from '../window/Window.svelte';
 
+	const { handleSubmit }: { handleSubmit: (password: string) => Promise<Response> } = $props();
+
 	let passwordInput = $state('');
+	let error = $state<string | null>(null);
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
-			console.log('submit:', passwordInput);
+			handlePasswordSubmit();
 		} else if (event.key === 'Backspace') {
 			passwordInput = passwordInput.slice(0, -1);
 		} else if (event.key.length === 1) {
 			passwordInput += event.key;
+		}
+	}
+
+	async function handlePasswordSubmit() {
+		const response = await handleSubmit(passwordInput);
+		if (response.ok) {
+			console.log('Password accepted');
+			error = null;
+		} else {
+			error = 'Incorrect password. Please try again.';
+			passwordInput = '';
+			return false;
 		}
 	}
 </script>
@@ -30,8 +45,12 @@
 		>
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />
-			C:\Users\ethanhen>login <br />
-			please enter password:
+			{#if !error}
+				C:\Users\ethanhen>login <br />
+				please enter password:
+			{:else}
+				C:\Users\ethanhen>error<br />{error} <br />
+			{/if}
 			{passwordInput
 				.split('')
 				.map((_) => '*')
