@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { getFolderToggleContext } from '$lib/utils/client/context';
+	import { showFolder, showPassword } from '$lib/utils/client/writables';
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import PasswordModal from '../uploads/PasswordModal.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	let text = $state('New Folder');
 	let inputElement: HTMLInputElement | null = null;
@@ -12,8 +15,33 @@
 		}
 	});
 
-	const createFolderContext = getFolderToggleContext();
+	async function onSubmit(password: string) {
+		const dir = (page.url.searchParams.get('path') || '') + '/' + text;
+
+		const response = await fetch(`/api/upload/dir`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ dir, password })
+		});
+
+		if (response.ok) {
+			showFolder.set(false);
+			showPassword.set(false);
+			text = 'New Folder';
+			inputElement?.blur();
+			await invalidateAll();
+		} else {
+			const error = await response.text();
+			alert(`Error creating folder: ${error}`);
+		}
+	}
 </script>
+
+{#if $showPassword}
+	<PasswordModal onSuccess={onSubmit} />
+{/if}
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -31,10 +59,10 @@
 		onkeydown={(e) => {
 			if (e.key === 'Enter') {
 				e.preventDefault();
-				createFolderContext.close();
+				showPassword.set(true);
 			} else if (e.key === 'Escape') {
 				e.preventDefault();
-				createFolderContext.close();
+				showFolder.set(false);
 			}
 		}}
 	/>

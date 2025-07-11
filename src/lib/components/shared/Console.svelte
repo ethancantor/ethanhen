@@ -6,13 +6,15 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
-			onSubmit(input);
+			onSubmit(input, (newInput: string) => (input = newInput));
 		} else if (event.key === 'Backspace') {
 			input = input.slice(0, -1);
 		} else if (event.key.length === 1) {
 			input += event.key;
 		}
 	}
+
+	const code = 'const add = (a: number, b: number) => a + b;';
 </script>
 
 <div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit translate-x-[-50%]">
@@ -23,7 +25,7 @@
 		titleIcon="/windowsIcons/Default Programs/cmd_IDI_APPICON.ico"
 	>
 		<div
-			class="console-font h-40 w-96 bg-black text-wrap break-all text-white"
+			class="console-font h-40 w-96 overflow-y-auto bg-black text-wrap break-all text-white"
 			onkeydown={handleKeyDown}
 			tabindex="0"
 			role="textbox"
@@ -32,10 +34,15 @@
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />
 			C:\Users\ethanhen>
-			{input}<span class="blinking-text">_</span>
+			<span>{input}</span>
+			<span class="blinking-text">_</span>
 		</div>
 	</Window>
 </div>
+
+<svelte:head>
+	<link rel="stylesheet" href="https://unpkg.com/svelte-highlight/styles/github.css" />
+</svelte:head>
 
 <style>
 	@font-face {

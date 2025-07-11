@@ -1,25 +1,10 @@
 <script>
 	import { LeftBar, MenuBar, MenuBarItem, UploadPage, Window } from '$lib';
-	import { setFolderToggleContext } from '$lib/utils/client/context';
+	import { showFolder } from '$lib/utils/client/writables';
 
 	function handleNewFolder() {
-		createFolderToggle = !createFolderToggle;
+		showFolder.set(true);
 	}
-
-	let createFolderToggle = $state(false);
-
-	setFolderToggleContext({
-		open: () => {
-			createFolderToggle = true;
-		},
-		close: () => {
-			createFolderToggle = false;
-		},
-		toggle: () => {
-			createFolderToggle = !createFolderToggle;
-		},
-		isOpen: () => createFolderToggle
-	});
 </script>
 
 {#snippet NavBarWithNewFolder()}

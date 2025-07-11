@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { showFolder, showPassword } from '$lib/utils/client/writables';
+	import { onMount } from 'svelte';
 	import Window from '../window/Window.svelte';
 
-	const { handleSubmit }: { handleSubmit?: (password: string) => Promise<Response> } = $props();
+	let { onSuccess }: { onSuccess: (password: string) => Promise<void> } = $props();
 
 	let passwordInput = $state('');
 	let error = $state<string | null>(null);
+
+	let divElement: HTMLDivElement | null = null;
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
@@ -17,18 +21,35 @@
 	}
 
 	async function handlePasswordSubmit() {
-		if (!handleSubmit) {
-			console.error('handleSubmit function is not provided');
-			return;
-		}
-		const response = await handleSubmit(passwordInput);
+		const response = await fetch(`/api/password?password=${encodeURIComponent(passwordInput)}`, {
+			method: 'GET'
+		});
 		if (response.ok) {
+			await onSuccess(passwordInput);
 			console.log('Password accepted');
 			error = null;
+			showPassword.set(false);
 		} else {
 			error = 'incorrect password. click this message to see the hint and try again.';
 			passwordInput = '';
 			return false;
+		}
+	}
+
+	onMount(() => {
+		if (divElement) {
+			divElement.focus();
+			divElement.addEventListener('keydown', handleKeyDown);
+		}
+	});
+
+	function onClose() {
+		showPassword.set(false);
+		showFolder.set(false);
+		error = null;
+		passwordInput = '';
+		if (divElement) {
+			divElement.removeEventListener('keydown', handleKeyDown);
 		}
 	}
 </script>
@@ -39,13 +60,15 @@
 		hasTopBar={false}
 		title="C:\Windows\System32\cmd.exe"
 		titleIcon="/windowsIcons/Default Programs/cmd_IDI_APPICON.ico"
+		onCloseClick={onClose}
+		onMinimizeClick={onClose}
 	>
 		<div
 			class="console-font h-40 w-96 bg-black text-wrap break-all text-white"
-			onkeydown={handleKeyDown}
 			tabindex="0"
 			role="textbox"
 			aria-label="Password input"
+			bind:this={divElement}
 		>
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />

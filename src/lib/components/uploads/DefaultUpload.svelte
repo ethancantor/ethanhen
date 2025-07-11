@@ -2,7 +2,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { WindowBody } from '$lib';
-	import { getFolderToggleContext } from '$lib/utils/client/context';
+	import { showFolder } from '$lib/utils/client/writables';
 	import FileExplorerCreator from '../shared/FileExplorerCreator.svelte';
 	import FileExplorerImage from '../shared/FileExplorerImage.svelte';
 
@@ -18,8 +18,6 @@
 		// nav to new path
 		await goto(nextPath);
 	}
-
-	const createFolderToggle = getFolderToggleContext();
 </script>
 
 <form
@@ -28,7 +26,7 @@
 	ondragover={(e) => e.preventDefault()}
 >
 	<WindowBody title="Drop Files to Upload" subtitle="Create folder above" className="pt-2">
-		{#if createFolderToggle.isOpen()}
+		{#if $showFolder}
 			<FileExplorerCreator />
 		{/if}
 		{#each folders as folder}
