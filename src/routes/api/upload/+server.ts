@@ -26,7 +26,6 @@ export async function POST({ request }: { request: Request }) {
 	const currentFilesKeys = currentFiles.map((file) => file.name);
 
 	return new Promise((resolve, reject) => {
-		// Convert Fetch API Headers to plain object for busboy
 		const headersObj: Record<string, string> = {};
 		request.headers.forEach((value, key) => {
 			headersObj[key.toLowerCase()] = value;

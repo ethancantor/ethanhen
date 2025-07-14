@@ -2,6 +2,7 @@
 	import { showFolder, showPassword } from '$lib/utils/client/writables';
 	import { onMount } from 'svelte';
 	import Window from '../window/Window.svelte';
+	import { fetchWithKey } from '$lib/utils/client/fetch';
 
 	let { onSuccess }: { onSuccess: (password: string) => Promise<void> } = $props();
 
@@ -21,9 +22,12 @@
 	}
 
 	async function handlePasswordSubmit() {
-		const response = await fetch(`/api/password?password=${encodeURIComponent(passwordInput)}`, {
-			method: 'GET'
-		});
+		const response = await fetchWithKey(
+			`/api/password?password=${encodeURIComponent(passwordInput)}`,
+			{
+				method: 'GET'
+			}
+		);
 		if (response.ok) {
 			await onSuccess(passwordInput);
 			console.log('Password accepted');

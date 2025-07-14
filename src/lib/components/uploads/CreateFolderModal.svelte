@@ -2,6 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Window } from '$lib';
+	import { fetchWithKey } from '$lib/utils/client/fetch';
 
 	let { closeModal }: { closeModal: () => void } = $props();
 	let folderName: string = $state('');
@@ -16,7 +17,7 @@
 			return;
 		}
 
-		const response = await fetch('/api/upload/dir', {
+		const response = await fetchWithKey('/api/upload/dir', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

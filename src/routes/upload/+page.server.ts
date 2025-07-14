@@ -1,4 +1,4 @@
-export async function load({ fetch, url }) {
+export async function load({ url, fetch }) {
 	let folders: string[] = [];
 
 	const params = url.searchParams.get('path');

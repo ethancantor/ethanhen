@@ -1,8 +1,10 @@
 import { json } from '@sveltejs/kit';
 import 'dotenv/config';
 
-export async function GET({ url }: { url: URL }) {
+export async function GET({ url, request }: { url: URL; request: Request }) {
 	const password = url.searchParams.get('password') || '';
+
+	console.log(request.headers);
 
 	const storedPass = process.env.ADMIN_PASS;
 	if (!storedPass) {
