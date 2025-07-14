@@ -1,3 +1,5 @@
+import { fetchWithKey } from '$lib/utils/client/fetch.js';
+
 export async function load({ url, fetch }) {
 	let folders: string[] = [];
 
@@ -5,7 +7,7 @@ export async function load({ url, fetch }) {
 
 	try {
 		const path = '/api/upload' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
-		const response = await fetch(path);
+		const response = await fetchWithKey(path, undefined, fetch);
 
 		if (response.ok) {
 			const data = await response.json();

@@ -1,13 +1,10 @@
 import { writable } from 'svelte/store';
 
-// Function to initialize the store
 function createSessionKeyStore() {
-	// Create a writable Svelte store with the initial key
 	const { subscribe, set } = writable(generateSimpleUniqueKey());
 
 	return {
 		subscribe,
-		// You can add methods to manually reset the key if needed
 		reset: () => {
 			if (typeof window !== 'undefined') {
 				const newKey = generateSimpleUniqueKey();
@@ -17,7 +14,6 @@ function createSessionKeyStore() {
 	};
 }
 
-// Export the initialized store
 export const sessionKey = createSessionKeyStore();
 
 function generateSimpleUniqueKey() {
