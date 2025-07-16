@@ -59,11 +59,6 @@
 	]);
 </script>
 
-<svelte:head>
-	<title>Image Gallery</title>
-	<meta name="description" content="A dynamic image gallery built with SvelteKit." />
-</svelte:head>
-
 <Window {topBarLocation}>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">

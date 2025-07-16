@@ -1,7 +1,9 @@
-import type { ImageAPIResponse } from '$lib/types/api.js';
+import type { ImageAPIResponse } from '$lib/types/api';
 import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 
-export async function load({ fetch, url }) {
+export const ssr = false;
+
+export async function load({ url, fetch }) {
 	let files: ImageAPIResponse = { images: [], folders: [] };
 
 	const params = url.searchParams.get('path');

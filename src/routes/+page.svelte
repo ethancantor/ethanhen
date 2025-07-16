@@ -1,6 +1,5 @@
 <script>
 	import { LeftBar, MediaPlayer, MenuItem, Window, WindowBody } from '$lib';
-	import PasswordModal from '$lib/components/uploads/PasswordModal.svelte';
 </script>
 
 <Window className="relative">
@@ -14,5 +13,3 @@
 		<MediaPlayer />
 	</div>
 </Window>
-
-<PasswordModal onSuccess={async () => console.log('Password entered successfully')} />

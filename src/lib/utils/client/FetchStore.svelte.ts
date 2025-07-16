@@ -7,22 +7,18 @@ class FetchStore {
 
 	private async initialize(fetchFn: FetchFunc = fetch): Promise<void> {
 		if (this.isInitialized || this.isInitializing) {
-			console.log('FetchStore is already initialized or initializing.');
 			return;
 		}
 
 		this.isInitializing = true;
 
 		try {
-			console.log('Fetching API key from /api/session');
 			const response = await fetchFn('/api/session', {
 				method: 'POST'
 			});
 			const { session } = await response.json();
-			console.log('FetchStore response, session:', session);
 			this.apiKey = session.id;
 			this.isInitialized = true;
-			console.log('FetchStore initialized with API key:', this.apiKey);
 		} catch (error) {
 			console.error('Failed to initialize API key:', error);
 			this.apiKey = '';
@@ -38,9 +34,9 @@ class FetchStore {
 	): Promise<Response> {
 		const fetchFn = customFetch || fetch;
 
-		if (!this.isInitialized) {
-			await this.initialize(fetchFn);
-		}
+		await this.initialize(fetchFn);
+
+		console.log('Using API key:', this.apiKey);
 
 		return await fetchFn(input, {
 			...init,
@@ -49,6 +45,25 @@ class FetchStore {
 				'X-API-Key': this.apiKey
 			}
 		});
+	}
+
+	async clearAPIKey(fetchFn: FetchFunc = fetch): Promise<void> {
+		try {
+			await fetchFn('/api/session', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ sessionID: this.apiKey })
+			});
+
+			this.apiKey = '';
+			this.isInitialized = false;
+			this.isInitializing = false;
+			console.log('API key cleared and FetchStore reset.');
+		} catch (error) {
+			console.error('Error clearing API key:', error);
+		}
 	}
 }
 
