@@ -1,4 +1,4 @@
-import { UPLOAD_DIR } from '$lib/types/api';
+import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import 'dotenv/config';
 import fs from 'fs/promises';

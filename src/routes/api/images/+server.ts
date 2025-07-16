@@ -1,9 +1,9 @@
 // src/routes/api/images/+server.js
 import { exists } from '$lib';
+import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
-import { UPLOAD_DIR } from '$lib/types/api.js';
 
 export async function GET({ url }) {
 	await fs.mkdir(UPLOAD_DIR, { recursive: true });

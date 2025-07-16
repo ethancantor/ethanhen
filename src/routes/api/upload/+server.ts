@@ -1,5 +1,5 @@
 import { exists } from '$lib';
-import { UPLOAD_DIR } from '$lib/types/api';
+import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import busboy from 'busboy';
 import fs from 'fs/promises';
