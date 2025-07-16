@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import PasswordModal from '../uploads/PasswordModal.svelte';
 	import { invalidateAll } from '$app/navigation';
-	import { fetchWithKey } from '$lib/utils/client/fetch';
+	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 
 	let text = $state('New Folder');
 	let inputElement: HTMLInputElement | null = null;
@@ -19,7 +19,7 @@
 	async function onSubmit(password: string) {
 		const dir = (page.url.searchParams.get('path') || '') + '/' + text;
 
-		const response = await fetchWithKey(`/api/upload/dir`, {
+		const response = await fetchStore.fetchWithKey(`/api/upload/dir`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

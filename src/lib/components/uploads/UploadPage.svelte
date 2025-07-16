@@ -2,8 +2,6 @@
 	import { page } from '$app/state';
 	import { DefaultUpload, UploadWithFiles } from '$lib';
 	import { uploadFile } from '$lib';
-	import { showPassword } from '$lib/utils/client/writables';
-	import PasswordModal from './PasswordModal.svelte';
 
 	let files: File[] = $state([]);
 	let finishedPercent = $state(0);

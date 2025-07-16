@@ -1,5 +1,5 @@
 import type { ImageAPIResponse } from '$lib/types/api.js';
-import { fetchWithKey } from '$lib/utils/client/fetch.js';
+import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 
 export async function load({ fetch, url }) {
 	let files: ImageAPIResponse = { images: [], folders: [] };
@@ -9,7 +9,7 @@ export async function load({ fetch, url }) {
 	try {
 		// Fetch image URLs from your custom API endpoint
 		const path = '/api/images' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
-		const response = await fetchWithKey(path, undefined, fetch);
+		const response = await fetchStore.fetchWithKey(path, undefined, fetch);
 
 		if (!response.ok) {
 			console.error(

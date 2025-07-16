@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { showFolder, showPassword } from '$lib/utils/client/writables';
 	import { onMount } from 'svelte';
-	import Window from '../window/Window.svelte';
-	import { fetchWithKey } from '$lib/utils/client/fetch';
+	import { Window } from '$lib';
+	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 
 	let { onSuccess }: { onSuccess: (password: string) => Promise<void> } = $props();
 
@@ -22,12 +22,13 @@
 	}
 
 	async function handlePasswordSubmit() {
-		const response = await fetchWithKey(
+		const response = await fetchStore.fetchWithKey(
 			`/api/password?password=${encodeURIComponent(passwordInput)}`,
 			{
 				method: 'GET'
 			}
 		);
+
 		if (response.ok) {
 			await onSuccess(passwordInput);
 			console.log('Password accepted');

@@ -1,4 +1,4 @@
-import { fetchWithKey } from '$lib/utils/client/fetch.js';
+import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 
 export async function load({ url, fetch }) {
 	let folders: string[] = [];
@@ -7,7 +7,7 @@ export async function load({ url, fetch }) {
 
 	try {
 		const path = '/api/upload' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
-		const response = await fetchWithKey(path, undefined, fetch);
+		const response = await fetchStore.fetchWithKey(path, undefined, fetch);
 
 		if (response.ok) {
 			const data = await response.json();
