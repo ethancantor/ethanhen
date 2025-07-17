@@ -1,12 +1,10 @@
 import type { FetchFunc } from "$lib/types/api";
+import { DEFAULT_SESSION_LENGTH } from "../shared/Sessions";
 import { documentCookie } from "./DocumentCookie";
-
 
 class CookieFetch {
     private isInitialized = $state(false);
     private isInitializing = $state(false);
-
-    private COOKIE_LENGTH = 2; // in hours
 
     private async initialize(fetchFn: FetchFunc = fetch): Promise<void> {
         if (this.isInitialized || this.isInitializing) {
@@ -23,7 +21,7 @@ class CookieFetch {
                 });
                 const { session } = await response.json();
 
-                documentCookie.set('apiKey', session.id, this.COOKIE_LENGTH); // Store for 2 hours
+                documentCookie.set('apiKey', session.id, DEFAULT_SESSION_LENGTH); // Store for 2 hours
                 this.isInitialized = true;
             } catch (error) {
                 console.error('Failed to initialize API key:', error);
