@@ -26,4 +26,3 @@ export { default as FileExplorerImage } from './components/shared/FileExplorerIm
 
 // utils
 export { exists } from './utils/server/fs-extention';
-export { uploadFile } from './utils/client/upload-funcs';

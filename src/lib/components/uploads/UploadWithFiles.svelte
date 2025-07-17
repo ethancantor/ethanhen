@@ -5,13 +5,11 @@
 		handleFileDrop,
 		files,
 		removeFile,
-		handleUploadClick,
 		finishedPercent
 	}: {
 		handleFileDrop: (event: DragEvent) => void;
 		files: File[];
 		removeFile: (file: File) => void;
-		handleUploadClick: () => void;
 		finishedPercent: number;
 	} = $props();
 </script>
@@ -35,5 +33,5 @@
 	<div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
 		<div style="width: {finishedPercent}%"></div>
 	</div>
-	<button class="h-4" onclick={handleUploadClick}>Upload {files.length} files</button>
+	<!-- <button class="h-4" onclick={handleUploadClick}>Upload {files.length} files</button> -->
 </div>

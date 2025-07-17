@@ -13,8 +13,8 @@ export async function POST() {
 /**
  * Retrieves the session details based on the session ID provided in the query parameters.
  */
-export async function GET({ url }: { url: URL }) {
-	const sessionID = url.searchParams.get('sessionID');
+export async function GET({ request }: { request: Request }) {
+	const sessionID = request.headers.get('x-api-key');
 	if (!sessionID) {
 		return json({ error: 'Session ID is required' }, { status: 400 });
 	}

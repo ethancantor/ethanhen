@@ -1,9 +1,22 @@
+import { getSession } from '$lib/utils/server/session-manager';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import 'dotenv/config';
 import fs from 'fs/promises';
 
 export async function POST({ request }: { request: Request }) {
+	const apiKey = request.headers.get('x-api-key');
+
+	if (!apiKey) {
+		return error(404, 'missing key');
+	}
+
+	const validKey = getSession(apiKey);
+
+	if (!validKey || !validKey.isAdmin) {
+		return error(401, 'invalid key');
+	}
+
 	if (!request.body) {
 		return error(400, 'No dir uploaded');
 	}

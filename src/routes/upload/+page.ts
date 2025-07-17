@@ -5,6 +5,8 @@ export const ssr = false;
 export async function load({ url, fetch }) {
 	let folders: string[] = [];
 
+	let isAdmin = false;
+
 	const params = url.searchParams.get('path');
 
 	try {
@@ -21,5 +23,20 @@ export async function load({ url, fetch }) {
 		console.error('Error fetching folders in load function:', e);
 	}
 
-	return { folders };
+	try {
+		const response = await fetchStore.fetchWithKey('/api/session', {
+			method: 'GET'
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch session: ${response.statusText}`);
+		}
+
+		const sessionData = await response.json();
+		isAdmin = sessionData.session.isAdmin || false;
+	} catch (e) {
+		console.error('Error during fetch in load function:', e);
+	}
+
+	return { folders, isAdmin };
 }

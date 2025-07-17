@@ -18,7 +18,6 @@
 		bodyDirection = 'row',
 		onClick,
 		id,
-		topBarLocation = ['C:', 'Users', 'ethanhen'],
 		title
 	}: {
 		children?: Snippet;
@@ -36,7 +35,6 @@
 		bodyDirection?: 'row' | 'column';
 		onClick?: (event: MouseEvent) => void;
 		id?: string;
-		topBarLocation?: string[];
 		title?: string;
 	} = $props();
 </script>
@@ -65,7 +63,7 @@
 				</div>
 			</div>
 		</div>
-		{#if hasTopBar}<TopBar {topBarLocation} />{/if}
+		{#if hasTopBar}<TopBar />{/if}
 		{#if hasMenuBar}
 			{#if CustomMenuBar}
 				{@render CustomMenuBar()}

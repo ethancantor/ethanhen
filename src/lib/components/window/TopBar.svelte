@@ -1,5 +1,15 @@
 <script lang="ts">
-	let { topBarLocation }: { topBarLocation: string[] } = $props();
+	import { page } from '$app/state';
+
+	let fullLocation = $derived([
+		'C:',
+		'Users',
+		'ethanhen',
+		...decodeURIComponent(page.url.searchParams.get('path') || '')
+			.replace('/gallery?path=', '')
+			.split('/')
+			.filter(Boolean)
+	]);
 </script>
 
 <div class="flex w-full flex-row items-center justify-start gap-2">
@@ -12,9 +22,9 @@
 		<div class="window-body mt-5 flex h-6 w-full flex-row items-center justify-between">
 			<div class="flex flex-row items-center justify-start gap-2 px-1">
 				<img src="/windowsIcons/Shell32.dll/shell32_267.ico" alt="explorer icon" class="h-4 w-4" />
-				{#each topBarLocation as location, index}
+				{#each fullLocation as location, index}
 					<span class="text-xs">{location}</span>
-					{#if index < topBarLocation.length - 1}
+					{#if index < fullLocation.length - 1}
 						<span style="font-size:8px">▶</span>
 					{/if}
 				{/each}

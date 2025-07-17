@@ -50,16 +50,9 @@
 		// nav to new path
 		await goto(nextPath);
 	}
-
-	let topBarLocation = $derived([
-		'C:',
-		'Users',
-		'ethanhen',
-		...decodeURIComponent(path.replace('/gallery?path=', '')).split('/').filter(Boolean)
-	]);
 </script>
 
-<Window {topBarLocation}>
+<Window>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">
 		<div class="grid max-h-[75vh] grid-cols-8 gap-3 overflow-y-auto p-4">

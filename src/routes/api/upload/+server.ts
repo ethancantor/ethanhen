@@ -1,4 +1,5 @@
 import { exists } from '$lib';
+import { getSession } from '$lib/utils/server/session-manager';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import busboy from 'busboy';
@@ -8,6 +9,18 @@ import { join } from 'node:path';
 import { Readable } from 'node:stream';
 
 export async function POST({ request }: { request: Request }) {
+	const apiKey = request.headers.get('x-api-key');
+
+	if (!apiKey) {
+		return json({ message: 'missing key' }, { status: 401 });
+	}
+
+	const validKey = getSession(apiKey);
+
+	if (!validKey || !validKey.isAdmin) {
+		return json({ message: 'invalid key' }, { status: 401 });
+	}
+
 	if (!request.body) {
 		return new Response('No files uploaded', { status: 400 });
 	}
