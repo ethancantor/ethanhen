@@ -20,9 +20,10 @@ export async function GET({ request }: { request: Request }) {
 		return error(404, 'Session ID is required');
 	}
 
-	const session = sessionManager.getSession(apiKey);
+	let session = sessionManager.getSession(apiKey);
 	if (!session) {
-		return error(404, 'Session not found');
+		// didnt get session from cookie, create a new one
+		session = sessionManager.remakeSession(apiKey);
 	}
 	return json({ session: { id: session.id, isAdmin: session.isAdmin } });
 }

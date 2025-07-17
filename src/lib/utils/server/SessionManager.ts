@@ -21,6 +21,29 @@ class SessionManager {
         return session;
     }
 
+    public remakeSession(id: string): Session {
+        this.cleanUpExpiredSessions();
+
+        const existingSession = this.getSession(id);
+        if (existingSession) {
+            this.deleteSession(id);
+        }
+
+
+        const newExpires = new Date(Date.now() + DEFAULT_SESSION_LENGTH);
+
+        const newSession: Session = {
+            id,
+            expiresAt: newExpires,
+            isAdmin: false
+        };
+
+        this.sessions.push(newSession);
+
+        console.log(`Remade session: ${newSession.id} from old session: ${id}`);
+        return newSession;
+    }
+
     public getSession(id: string): Session | undefined {
         this.cleanUpExpiredSessions();
         console.log(`Getting session for id: ${id}, current sessions: ${this.sessions.length}`);
@@ -58,9 +81,8 @@ class SessionManager {
     }
 
     private cleanUpExpiredSessions(): void {
-        const now = new Date();
-        this.sessions = this.sessions.filter((s) => s.expiresAt > now);
-        console.log(`Cleaned up expired sessions, remaining: ${this.sessions.length}`);
+        this.sessions = this.sessions.filter((s) => s.expiresAt > new Date());
+        // console.log(`Cleaned up expired sessions, remaining: ${this.sessions.length}`);
     }
 }
 
