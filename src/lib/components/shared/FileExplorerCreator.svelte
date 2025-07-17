@@ -4,7 +4,8 @@
 	import { page } from '$app/state';
 	import PasswordModal from '../uploads/PasswordModal.svelte';
 	import { invalidateAll } from '$app/navigation';
-	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
+	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
+	import { apiFetch } from '$lib/utils/client/APIFetch';
 
 	let text = $state('New Folder');
 	let inputElement: HTMLInputElement | null = null;
@@ -16,15 +17,21 @@
 		}
 	});
 
-	async function onSubmit(password: string) {
+	async function onSubmit() {
+		const isAdmin = await apiFetch.checkAdmin();
+		if (!isAdmin) {
+			showPassword.set(true);
+			return;
+		}
+
 		const dir = (page.url.searchParams.get('path') || '') + '/' + text;
 
-		const response = await fetchStore.fetchWithKey(`/api/upload/dir`, {
+		const response = await cookieFetch.fetchWithKey(`/api/upload/dir`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ dir, password })
+			body: JSON.stringify({ dir })
 		});
 
 		if (response.ok) {
@@ -33,9 +40,6 @@
 			text = 'New Folder';
 			inputElement?.blur();
 			await invalidateAll();
-		} else {
-			const error = await response.text();
-			alert(`Error creating folder: ${error}`);
 		}
 	}
 </script>
@@ -60,10 +64,10 @@
 		onkeydown={(e) => {
 			if (e.key === 'Enter') {
 				e.preventDefault();
-				showPassword.set(true);
+				onSubmit();
 			} else if (e.key === 'Escape') {
 				e.preventDefault();
-				showFolder.set(false);
+				onSubmit();
 			}
 		}}
 	/>

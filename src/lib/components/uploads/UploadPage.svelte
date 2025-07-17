@@ -1,37 +1,38 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { DefaultUpload, UploadWithFiles } from '$lib';
-	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
+	import { DefaultUpload, UploadWithFiles, PasswordModal } from '$lib';
+	import { apiFetch } from '$lib/utils/client/APIFetch';
+	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 	import { showPassword } from '$lib/utils/client/writables';
-	import PasswordModal from './PasswordModal.svelte';
 
 	let files: File[] = $state([]);
 	let finishedPercent = $state(0);
 
 	const searchParams = page.url.searchParams.get('path');
 
-	function handleFileDrop(event: DragEvent) {
+	async function handleFileDrop(event: DragEvent) {
 		event.preventDefault();
 		if (event.dataTransfer?.files) {
 			files.push(...Array.from(event.dataTransfer.files));
 		}
 
-		if (!page.data.isAdmin) {
-			showPassword.set(true);
-		} else {
-			handleFileUpload();
-		}
+		handleFileUpload();
 	}
 
 	function removeFile(file: File) {
 		files = files.filter((f) => f !== file);
 	}
 
-	function handleFileUpload() {
+	async function handleFileUpload() {
+		const isAdmin = await apiFetch.checkAdmin();
+		if (!isAdmin) {
+			showPassword.set(true);
+			return;
+		}
+
 		finishedPercent = 0;
 		const uploadPromises = files.map((file) =>
-			fetchStore.uploadFileWithKey(file, searchParams || '', (progress) => {
+			cookieFetch.uploadFileWithKey(file, searchParams || '', (progress) => {
 				finishedPercent += Math.round(progress / (files.length - 1));
 			})
 		);
@@ -48,13 +49,7 @@
 </script>
 
 {#if $showPassword}
-	<PasswordModal
-		onSuccess={async () => {
-			invalidateAll();
-			console.log('Password accepted, proceeding with upload');
-			handleFileUpload();
-		}}
-	/>
+	<PasswordModal onSuccess={async () => handleFileUpload()} />
 {/if}
 
 {#if files.length > 0}

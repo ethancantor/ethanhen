@@ -1,13 +1,16 @@
-import { validateSession } from '$lib/utils/server/session-manager';
-import { json } from '@sveltejs/kit';
+import { CookieParser } from '$lib/utils/server/CookieParser';
+import { sessionManager } from '$lib/utils/server/SessionManager';
+import { error, json } from '@sveltejs/kit';
 import 'dotenv/config';
 
 export async function GET({ url, request }: { url: URL; request: Request }) {
 	const password = url.searchParams.get('password') || '';
+	console.log(request.headers.get('cookie'));
 
-	const apiKey = request.headers.get('x-api-key');
+	const apiKey = CookieParser.getAPIKey(request);
+
 	if (!apiKey) {
-		return json({ error: 'API key is required' }, { status: 401 });
+		return error(401, 'Unauthorized: No API key provided');
 	}
 
 	const storedPass = process.env.ADMIN_PASS;
@@ -18,7 +21,7 @@ export async function GET({ url, request }: { url: URL; request: Request }) {
 	}
 
 	// give admin perms to api key for the session
-	validateSession(apiKey);
+	sessionManager.validateSession(apiKey);
 
 	return json({ password }, { status: 200 });
 }

@@ -1,17 +1,18 @@
-import { getSession } from '$lib/utils/server/session-manager';
+import { CookieParser } from '$lib/utils/server/CookieParser';
+import { sessionManager } from '$lib/utils/server/SessionManager';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import 'dotenv/config';
 import fs from 'fs/promises';
 
 export async function POST({ request }: { request: Request }) {
-	const apiKey = request.headers.get('x-api-key');
+	const apiKey = CookieParser.getAPIKey(request);
 
 	if (!apiKey) {
 		return error(404, 'missing key');
 	}
 
-	const validKey = getSession(apiKey);
+	const validKey = sessionManager.getSession(apiKey);
 
 	if (!validKey || !validKey.isAdmin) {
 		return error(401, 'invalid key');
@@ -22,19 +23,6 @@ export async function POST({ request }: { request: Request }) {
 	}
 
 	const requestBody = await request.json();
-
-	if (!requestBody.password) {
-		return error(400, 'Please provide a password');
-	}
-
-	const password = requestBody.password;
-
-	const storedPass = process.env.ADMIN_PASS;
-
-	if (!storedPass || storedPass !== password) {
-		console.log(`Invalid password attempt: ${password} ${storedPass}`);
-		return error(403, 'Wrong password... Ethan cmon');
-	}
 
 	const dir = requestBody.dir;
 	const fullDir = UPLOAD_DIR + '/' + dir;

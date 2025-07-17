@@ -21,8 +21,11 @@ export { default as TopBar } from './components/window/TopBar.svelte';
 export { default as Window } from './components/window/Window.svelte';
 export { default as WindowBody } from './components/window/WindowBody.svelte';
 
+// passwords
+export { default as PasswordModal } from './components/uploads/PasswordModal.svelte';
+
 // shared
 export { default as FileExplorerImage } from './components/shared/FileExplorerImage.svelte';
 
 // utils
-export { exists } from './utils/server/fs-extention';
+export { exists } from './utils/server/fs-extensions';

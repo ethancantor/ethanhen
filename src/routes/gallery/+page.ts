@@ -1,5 +1,5 @@
 import type { ImageAPIResponse } from '$lib/types/api';
-import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
+import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 
 export const ssr = false;
 
@@ -11,7 +11,7 @@ export async function load({ url, fetch }) {
 	try {
 		// Fetch image URLs from your custom API endpoint
 		const path = '/api/images' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
-		const response = await fetchStore.fetchWithKey(path, undefined, fetch);
+		const response = await cookieFetch.fetchWithKey(path, undefined, fetch);
 
 		if (!response.ok) {
 			console.error(

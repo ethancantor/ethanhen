@@ -58,7 +58,7 @@
 						src={file}
 						name={`Img ${index + 1}`}
 						onClick={() => {
-							selectedImage = index;
+							selectedImage = images.indexOf(file);
 						}}
 					/>
 				{:else if folders.includes(file)}
@@ -78,7 +78,7 @@
 	>
 		<div class="h-fit w-fit" bind:this={modalContentRef}>
 			<FullSizeImage
-				src={files[selectedImage]}
+				src={images[selectedImage]}
 				alt="Full Size Image"
 				className="max-h-[80vh] max-w-[90vw]"
 				{clearImage}

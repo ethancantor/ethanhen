@@ -1,12 +1,13 @@
-import { createSession, deleteSession, getSession } from '$lib/utils/server/session-manager';
-import { json } from '@sveltejs/kit';
+import { CookieParser } from '$lib/utils/server/CookieParser';
+import { sessionManager } from '$lib/utils/server/SessionManager';
+import { error, json } from '@sveltejs/kit';
 
 /**
  * Creates a new session and returns the session id.
  * @returns A new session object with a unique ID.
  */
 export async function POST() {
-	const session = createSession();
+	const session = sessionManager.createSession();
 	return json({ session: { id: session.id } });
 }
 
@@ -14,13 +15,14 @@ export async function POST() {
  * Retrieves the session details based on the session ID provided in the query parameters.
  */
 export async function GET({ request }: { request: Request }) {
-	const sessionID = request.headers.get('x-api-key');
-	if (!sessionID) {
-		return json({ error: 'Session ID is required' }, { status: 400 });
+	const apiKey = CookieParser.getAPIKey(request);
+	if (!apiKey) {
+		return error(404, 'Session ID is required');
 	}
-	const session = getSession(sessionID);
+
+	const session = sessionManager.getSession(apiKey);
 	if (!session) {
-		return json({ error: 'Session not found' }, { status: 404 });
+		return error(404, 'Session not found');
 	}
 	return json({ session: { id: session.id, isAdmin: session.isAdmin } });
 }
@@ -33,11 +35,11 @@ export async function DELETE({ request }: { request: Request }) {
 	if (!sessionID) {
 		return json({ error: 'Session ID is required' }, { status: 400 });
 	}
-	const session = getSession(sessionID);
+	const session = sessionManager.getSession(sessionID);
 	if (!session) {
 		return json({ error: 'Session not found' }, { status: 404 });
 	}
 
-	deleteSession(sessionID);
+	sessionManager.deleteSession(sessionID);
 	return json({ message: 'Session deleted successfully' });
 }

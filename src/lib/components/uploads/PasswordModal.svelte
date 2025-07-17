@@ -2,7 +2,7 @@
 	import { showFolder, showPassword } from '$lib/utils/client/writables';
 	import { onMount } from 'svelte';
 	import { Window } from '$lib';
-	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
+	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 
 	let { onSuccess }: { onSuccess: (password: string) => Promise<void> } = $props();
 
@@ -22,7 +22,7 @@
 	}
 
 	async function handlePasswordSubmit() {
-		const response = await fetchStore.fetchWithKey(
+		const response = await cookieFetch.fetchWithKey(
 			`/api/password?password=${encodeURIComponent(passwordInput)}`,
 			{
 				method: 'GET'

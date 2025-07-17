@@ -1,5 +1,6 @@
 import { exists } from '$lib';
-import { getSession } from '$lib/utils/server/session-manager';
+import { CookieParser } from '$lib/utils/server/CookieParser';
+import { sessionManager } from '$lib/utils/server/SessionManager';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import busboy from 'busboy';
@@ -9,13 +10,15 @@ import { join } from 'node:path';
 import { Readable } from 'node:stream';
 
 export async function POST({ request }: { request: Request }) {
-	const apiKey = request.headers.get('x-api-key');
+	const apiKey = CookieParser.getAPIKey(request);
 
 	if (!apiKey) {
 		return json({ message: 'missing key' }, { status: 401 });
 	}
 
-	const validKey = getSession(apiKey);
+	const validKey = sessionManager.getSession(apiKey);
+
+	console.log('Valid key:', validKey);
 
 	if (!validKey || !validKey.isAdmin) {
 		return json({ message: 'invalid key' }, { status: 401 });
@@ -45,7 +48,7 @@ export async function POST({ request }: { request: Request }) {
 		});
 		const bb = busboy({ headers: headersObj });
 
-		bb.on('file', (name, file, info) => {
+		bb.on('file', (_name, file, info) => {
 			let filename = info.filename;
 
 			if (currentFilesKeys.includes(filename)) {

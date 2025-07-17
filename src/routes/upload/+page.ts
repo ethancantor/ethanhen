@@ -1,4 +1,4 @@
-import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
+import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 
 export const ssr = false;
 
@@ -11,7 +11,7 @@ export async function load({ url, fetch }) {
 
 	try {
 		const path = '/api/upload' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
-		const response = await fetchStore.fetchWithKey(path, undefined, fetch);
+		const response = await cookieFetch.fetchWithKey(path, undefined, fetch);
 
 		if (response.ok) {
 			const data = await response.json();
@@ -24,17 +24,17 @@ export async function load({ url, fetch }) {
 	}
 
 	try {
-		const response = await fetchStore.fetchWithKey('/api/session', {
+		const response = await cookieFetch.fetchWithKey('/api/session', {
 			method: 'GET'
 		});
-
-		console.log('Session response:', response);
 
 		if (!response.ok) {
 			throw new Error(`Failed to fetch session: ${response.statusText}`);
 		}
 
 		const sessionData = await response.json();
+
+		console.log('Session data:', sessionData.session);
 		isAdmin = sessionData.session.isAdmin || false;
 	} catch (e) {
 		console.error('Error during fetch in load function:', e);
