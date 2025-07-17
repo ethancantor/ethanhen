@@ -1,10 +1,15 @@
 <script>
-	import LeftBar from '$lib/components/LeftBar.svelte';
-	import MainMenuWindowBody from '$lib/components/MainMenuWindowBody.svelte';
-	import Window from '$lib/components/Window.svelte';
+	import { LeftBar, MediaPlayer, MenuItem, Window, WindowBody } from '$lib';
 </script>
 
-<Window>
+<Window className="relative">
 	<LeftBar />
-	<MainMenuWindowBody />
+	<WindowBody title="Documents library" subtitle="3 locations">
+		<MenuItem label="gallery" href="/gallery" />
+		<MenuItem label="upload" href="/upload" />
+		<MenuItem label="awesome stuff" href="/console" />
+	</WindowBody>
+	<div class="absolute right-0 bottom-0 -z-10 h-fit w-fit translate-x-[75%] translate-y-[90%]">
+		<MediaPlayer />
+	</div>
 </Window>

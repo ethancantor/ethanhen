@@ -1,8 +1,7 @@
+import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'uploaded_images');
 
 function getImageContentType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
@@ -28,7 +27,7 @@ function getImageContentType(filename: string): string {
 }
 
 export async function GET({ params }: { params: { image: string } }): Promise<Response> {
-	const filename = params.image;
+	const filename = decodeURIComponent(params.image);
 	const imagePath = path.join(UPLOAD_DIR, filename);
 
 	try {

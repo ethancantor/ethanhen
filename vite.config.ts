@@ -7,7 +7,7 @@ export default defineConfig({
 		fs: {
 			allow: [
 				searchForWorkspaceRoot(process.cwd()),
-				'./gallery', // Allow access to the gallery directory
+				'./gallery' // Allow access to the gallery directory
 			]
 		}
 	},
