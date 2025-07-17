@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Window } from '$lib';
 	import { onSubmit } from '$lib/utils/client/console-options';
 
@@ -17,7 +18,7 @@
 	const code = 'const add = (a: number, b: number) => a + b;';
 </script>
 
-<div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit translate-x-[-50%]">
+<div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit max-w-[90vw] translate-x-[-50%]">
 	<Window
 		hasMenuBar={false}
 		hasTopBar={false}
@@ -34,7 +35,7 @@
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />
 			C:\Users\ethanhen>
-			<span>{input}</span>
+			<span>{input.trim()}</span>
 			<span class="blinking-text">_</span>
 		</div>
 	</Window>

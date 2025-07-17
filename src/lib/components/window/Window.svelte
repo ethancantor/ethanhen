@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { MenuBar, MenuBarItem, TopBar } from '$lib';
 	import type { Snippet } from 'svelte';
 
@@ -37,6 +38,10 @@
 		id?: string;
 		title?: string;
 	} = $props();
+
+	const homeRedirect = () => {
+		goto('/');
+	};
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -57,9 +62,9 @@
 			{/if}
 			<div class="flex w-full flex-row justify-end">
 				<div class="title-bar-controls">
-					<button aria-label="Minimize" onclick={onMinimizeClick}></button>
+					<button aria-label="Minimize" onclick={onMinimizeClick || homeRedirect}></button>
 					<button aria-label="Maximize" onclick={onMaximizeClick}></button>
-					<button aria-label="Close" onclick={onCloseClick}></button>
+					<button aria-label="Close" onclick={onCloseClick || homeRedirect}></button>
 				</div>
 			</div>
 		</div>

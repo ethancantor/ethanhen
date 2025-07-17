@@ -2,7 +2,7 @@
 	import { MenuIcon } from '$lib';
 </script>
 
-<div class="flex h-full w-fit flex-col gap-1 border-r-2 border-gray-300 p-2 px-5 pb-20">
+<div class="hidden h-full w-fit flex-col gap-1 border-r-2 border-gray-300 p-2 px-5 pb-20 md:flex">
 	<!-- First Group -->
 	<MenuIcon src="/windowsIcons/Libraries/2315.ico" label="Favorites" />
 	<MenuIcon

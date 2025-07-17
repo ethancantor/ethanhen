@@ -4,7 +4,7 @@
 
 <Window className="relative">
 	<LeftBar />
-	<WindowBody title="Documents library" subtitle="2 locations">
+	<WindowBody title="Documents library" subtitle="3 locations">
 		<MenuItem label="gallery" href="/gallery" />
 		<MenuItem label="upload" href="/upload" />
 		<MenuItem label="awesome stuff" href="/console" />

@@ -28,6 +28,8 @@ export async function load({ url, fetch }) {
 			method: 'GET'
 		});
 
+		console.log('Session response:', response);
+
 		if (!response.ok) {
 			throw new Error(`Failed to fetch session: ${response.statusText}`);
 		}

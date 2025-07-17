@@ -46,11 +46,11 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="flex h-fit w-fit cursor-pointer flex-col items-center" tabindex="0">
+<div class="flex h-fit w-fit cursor-pointer flex-col items-center p-2" tabindex="0">
 	<img
 		src={'/windowsIcons/Standard Folders/imageres_3.ico'}
 		alt={'new folder'}
-		class="h-12"
+		class="h-20 w-20 shrink-0 md:h-32 md:w-32"
 		loading="lazy"
 	/>
 	<input

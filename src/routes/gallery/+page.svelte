@@ -10,7 +10,6 @@
 	let files = $derived([...images, ...folders].sort((a, b) => a.localeCompare(b)));
 
 	let selectedImage = $state(-1);
-	let path = $derived(page.url.searchParams.get('path') || '');
 
 	function clearImage() {
 		selectedImage = -1;
@@ -44,9 +43,6 @@
 
 		await invalidateAll();
 
-		// update state
-		path = nextPath;
-
 		// nav to new path
 		await goto(nextPath);
 	}
@@ -55,23 +51,21 @@
 <Window>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">
-		<div class="grid max-h-[75vh] grid-cols-8 gap-3 overflow-y-auto p-4">
-			{#if files && files.length > 0}
-				{#each files as file, index}
-					{#if images.includes(file)}
-						<FileExplorerImage
-							src={file}
-							name={`Img ${index + 1}`}
-							onClick={() => {
-								selectedImage = index;
-							}}
-						/>
-					{:else if folders.includes(file)}
-						<FileExplorerImage name={file} onClick={() => handleFolderClick(file)} />
-					{/if}
-				{/each}
-			{/if}
-		</div>
+		{#if files && files.length > 0}
+			{#each files as file, index}
+				{#if images.includes(file)}
+					<FileExplorerImage
+						src={file}
+						name={`Img ${index + 1}`}
+						onClick={() => {
+							selectedImage = index;
+						}}
+					/>
+				{:else if folders.includes(file)}
+					<FileExplorerImage name={file} onClick={() => handleFolderClick(file)} />
+				{/if}
+			{/each}
+		{/if}
 	</WindowBody>
 </Window>
 

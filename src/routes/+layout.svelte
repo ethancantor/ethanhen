@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
 	import '../app.css';
 	import '../fonts.css';
-	import { fetchStore } from '$lib/utils/client/FetchStore.svelte';
-	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
-	onMount(() => {
+	$effect.pre(() => {
 		fetchStore.clearAPIKey();
 	});
 </script>

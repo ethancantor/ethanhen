@@ -25,7 +25,7 @@
 	ondrop={handleFileDrop}
 	ondragover={(e) => e.preventDefault()}
 >
-	<WindowBody title="Drop Files to Upload" subtitle="Create folder above" className="pt-2">
+	<WindowBody title="Drop Files to Upload" subtitle="Create folder above">
 		{#if $showFolder}
 			<FileExplorerCreator />
 		{/if}
