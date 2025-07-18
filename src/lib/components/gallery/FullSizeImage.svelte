@@ -16,6 +16,17 @@
 		advanceImage: () => void;
 		retreatImage: () => void;
 	} = $props();
+
+	window.addEventListener('keydown', (event) => {
+		event.preventDefault();
+		if (event.key === 'Escape') {
+			clearImage();
+		} else if (event.key === 'ArrowRight') {
+			advanceImage();
+		} else if (event.key === 'ArrowLeft') {
+			retreatImage();
+		}
+	});
 </script>
 
 {#snippet FullSizeImageMenuBar()}
@@ -39,7 +50,7 @@
 	hasTopBar={false}
 	bodyDirection="column"
 >
-	<img class="h-full w-full object-contain p-16 {className}" {src} {alt} />
+	<img class="h-full w-full object-contain p-4 md:p-16 {className}" {src} {alt} />
 	<div class="flex h-fit w-full items-center justify-center bg-[#a8c8ea8e]">
 		<PhotoControls onForwardClick={advanceImage} onBackClick={retreatImage} />
 	</div>

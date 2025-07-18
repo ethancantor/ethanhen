@@ -8,7 +8,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="h-fit w-fit cursor-pointer items-center p-2"
+	class="mt-auto flex h-fit w-fit cursor-pointer flex-col items-center justify-end gap-0"
 	tabindex="0"
 	onclick={() => onClick?.(name || 'File')}
 	onkeydown={(e) => {
@@ -20,7 +20,7 @@
 	<img
 		src={src || '/windowsIcons/Standard Folders/imageres_3.ico'}
 		alt={name}
-		class="h-20 w-20 shrink-0 md:h-32 md:w-32"
+		class="block h-auto max-h-16 w-20 shrink-0 object-scale-down md:max-h-20 md:w-32"
 		loading="lazy"
 	/>
 	{#if name}
@@ -35,6 +35,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-</style>

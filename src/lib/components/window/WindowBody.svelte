@@ -30,7 +30,7 @@
 			<span style="font-size:8px">▼</span>
 		</div>
 	</div>
-	<div class="flex flex-row gap-3 md:gap-4 {className} max-h-[50vh] flex-wrap overflow-y-auto">
+	<div class="flex max-h-[50vh] flex-row flex-wrap gap-3 overflow-y-auto {className} ">
 		{#if children}
 			{@render children()}
 		{/if}

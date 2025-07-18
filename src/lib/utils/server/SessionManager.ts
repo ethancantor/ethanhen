@@ -14,9 +14,9 @@ class SessionManager {
         };
         this.sessions.push(session);
 
-        console.log(
-            `Created session: ${session.id}, expires at: ${session.expiresAt}, ${this.sessions.length}`
-        );
+        // console.log(
+        //     `Created session: ${session.id}, expires at: ${session.expiresAt}, ${this.sessions.length}`
+        // );
 
         return session;
     }
@@ -40,13 +40,13 @@ class SessionManager {
 
         this.sessions.push(newSession);
 
-        console.log(`Remade session: ${newSession.id} from old session: ${id}`);
+        // console.log(`Remade session: ${newSession.id} from old session: ${id}`);
         return newSession;
     }
 
     public getSession(id: string): Session | undefined {
         this.cleanUpExpiredSessions();
-        console.log(`Getting session for id: ${id}, current sessions: ${this.sessions.length}`);
+        // console.log(`Getting session for id: ${id}, current sessions: ${this.sessions.length}`);
 
         const session = this.sessions.find((s) => s.id === id);
         if (session && session.expiresAt > new Date()) {
@@ -62,7 +62,7 @@ class SessionManager {
     public deleteSession(id: string): void {
         this.cleanUpExpiredSessions();
 
-        console.log(`Deleting session for id: ${id}, current sessions: ${this.sessions.length}`);
+        // console.log(`Deleting session for id: ${id}, current sessions: ${this.sessions.length}`);
         const index = this.sessions.findIndex((s) => s.id === id);
         if (index !== -1) {
             this.sessions.splice(index, 1);
@@ -72,7 +72,7 @@ class SessionManager {
     public validateSession(id: string): Session | undefined {
         this.cleanUpExpiredSessions();
 
-        console.log(`Validating session for id: ${id}, current sessions: ${this.sessions.length}`);
+        // console.log(`Validating session for id: ${id}, current sessions: ${this.sessions.length}`);
         const session = this.getSession(id);
         if (session) {
             session.isAdmin = true;

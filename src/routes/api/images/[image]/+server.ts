@@ -2,6 +2,7 @@ import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error } from '@sveltejs/kit';
 import fs from 'fs/promises';
 import path from 'path';
+import sharp from 'sharp';
 
 function getImageContentType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
@@ -38,7 +39,11 @@ export async function GET({ params }: { params: { image: string } }): Promise<Re
 			throw error(400, { message: 'Unsupported file type.' });
 		}
 
-		return new Response(imageBuffer, {
+		const processedImageBuffer = await sharp(imageBuffer)
+			.resize({ width: Math.round(0.5 * (await sharp(imageBuffer).metadata()).width) }) // Scale width by 50%, height auto
+			.toBuffer();
+
+		return new Response(processedImageBuffer, {
 			headers: {
 				'Content-Type': contentType,
 				'Cache-Control': 'public, max-age=31536000' // Cache images for a year

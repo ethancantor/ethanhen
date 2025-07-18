@@ -46,17 +46,19 @@
 		// nav to new path
 		await goto(nextPath);
 	}
+
+	let path = page.url.href.replace('/gallery', '') + '/api/images/';
 </script>
 
 <Window>
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle="Pictures">
 		{#if files && files.length > 0}
-			{#each files as file, index}
+			{#each files as file}
 				{#if images.includes(file)}
 					<FileExplorerImage
 						src={file}
-						name={`Img ${index + 1}`}
+						name={decodeURIComponent(file).replace(path, '').replaceAll('/', '')}
 						onClick={() => {
 							selectedImage = images.indexOf(file);
 						}}

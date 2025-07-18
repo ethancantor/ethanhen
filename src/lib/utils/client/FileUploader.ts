@@ -1,7 +1,7 @@
 
 class FileUploader {
 
-    private readonly CHUNK_SIZE = 1024 * 1024 * 5; // 5MB
+    private readonly CHUNK_SIZE = 1024 * 1024 / 3;
 
     public async uploadFile(file: File, url: string, progressCallback: (percent: number) => void, uploadDir: string): Promise<void> {
         let offset = 0;

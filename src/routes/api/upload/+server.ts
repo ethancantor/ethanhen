@@ -36,8 +36,6 @@ export async function POST({ request }: { request: Request }) {
 
 	const validKey = sessionManager.getSession(apiKey);
 
-	console.log('Valid key:', validKey);
-
 	if (!validKey || !validKey.isAdmin) {
 		return json({ message: 'invalid key' }, { status: 401 });
 	}
