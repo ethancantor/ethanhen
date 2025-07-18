@@ -25,14 +25,13 @@
 	/>
 	{#if name}
 		<div class="max-w-[10rem] text-center text-sm break-all text-black">
-			<!-- {#if name.includes('.')}
+			{#if name.includes('.')}
 				{name.split('.').slice(0, -1).join('').slice(0, NUMBER_OF_CHARACTERS_TO_SHOW) +
 					'.' +
 					name.split('.').pop()}
 			{:else}
 				{name}
-			{/if} -->
-			{name}
+			{/if}
 		</div>
 	{/if}
 </div>

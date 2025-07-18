@@ -22,7 +22,7 @@
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
-		"@types/busboy": "^1.5.4",
+		"@types/node": "^24.0.14",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -39,7 +39,6 @@
 	},
 	"dependencies": {
 		"7.css": "^0.19.0",
-		"busboy": "^1.6.0",
 		"dotenv": "^17.0.1"
 	}
 }

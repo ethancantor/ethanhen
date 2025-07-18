@@ -1,6 +1,7 @@
 import type { FetchFunc } from "$lib/types/api";
 import { DEFAULT_SESSION_LENGTH } from "../shared/Sessions";
 import { documentCookie } from "./DocumentCookie";
+import { fileUploader } from "./FileUploader";
 
 class CookieFetch {
     private isInitialized = $state(false);
@@ -74,37 +75,7 @@ class CookieFetch {
             throw new Error('No files to upload');
         }
 
-        try {
-            const xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', (event) => {
-                if (event.lengthComputable) {
-                    progressCallback((event.loaded / event.total) * 100);
-                }
-            });
-
-            xhr.open('POST', '/api/upload');
-            xhr.setRequestHeader('Accept', 'application/json');
-            xhr.setRequestHeader('x-upload-dir', uploadDir);
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    console.log('Upload successful:', xhr.responseText);
-                } else {
-                    console.error('Upload failed:', xhr.status, xhr.statusText);
-                }
-            };
-
-            xhr.onerror = () => {
-                console.error('Upload error:', xhr.status, xhr.statusText);
-            };
-
-            const formData = new FormData();
-            formData.append('file', file);
-            xhr.send(formData);
-        } catch (err) {
-            console.error('Error during upload:', err);
-        }
+        await fileUploader.uploadFile(file, '/api/upload', progressCallback, uploadDir);
     }
 }
 
