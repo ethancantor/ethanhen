@@ -10,3 +10,7 @@ export async function exists(path: string): Promise<boolean> {
 		.then(() => true)
 		.catch(() => false);
 }
+
+export enum ATTRIBUTES {
+	ORDER = 'user.order',
+}

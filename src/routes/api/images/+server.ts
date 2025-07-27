@@ -1,11 +1,13 @@
 // src/routes/api/images/+server.js
 import { exists } from '$lib';
+import { ATTRIBUTES } from '$lib/utils/server/fs-extensions.js';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
+import { getAttribute } from 'fs-xattr';
 import fs from 'fs/promises';
 import path from 'path';
 
-export async function GET({ url }) {
+export async function GET({ url }): Promise<Response> {
 	await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
 	const paramPath = url.searchParams.get('path');
@@ -18,11 +20,20 @@ export async function GET({ url }) {
 	try {
 		const files = await fs.readdir(fullPath, { withFileTypes: true });
 
-		const imageFiles = files
-			.filter((file) => /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i.test(file.name))
+		const orders = await Promise.all(
+			files.map(async (file, index) => ({
+				file,
+				order: await getAttribute(path.join(fullPath, file.name),
+					ATTRIBUTES.ORDER).then(attr => Number(attr.toString())).catch(() => index)
+			}))
+		);
+
+		const imageFiles = orders
+			.filter((order) => /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i.test(order.file.name))
+			.sort((a, b) => a.order - b.order)
 			.map(
-				(file) =>
-					`${url.origin}/api/images/${encodeURIComponent(`${file.parentPath.replace(UPLOAD_DIR, '')}/${file.name}`)}`
+				(order) =>
+					`${url.origin}/api/images/${encodeURIComponent(`${order.file.parentPath.replace(UPLOAD_DIR, '')}/${order.file.name}`)}`
 			);
 
 		const folders = files.filter((file) => file.isDirectory()).map((file) => file.name);
