@@ -2,7 +2,14 @@
 	const { onClick, src, name }: { onClick?: (name: string) => void; src?: string; name?: string } =
 		$props();
 
-	const NUMBER_OF_CHARACTERS_TO_SHOW = 10;
+	const folderIcon = '/windowsIcons/Standard Folders/imageres_3.ico';
+
+	const source = $derived(() => {
+		if (!src) {
+			return folderIcon;
+		}
+		return src + '?scale=thumbnail';
+	});
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -17,21 +24,23 @@
 		}
 	}}
 >
-	<img
-		src={src || '/windowsIcons/Standard Folders/imageres_3.ico'}
-		alt={name}
-		class="block h-auto max-h-16 w-20 shrink-0 object-scale-down md:max-h-20 md:w-32"
-		loading="lazy"
-	/>
+	<div
+		class="flex h-20 w-20 items-end justify-center md:h-32 md:w-32 {source() === folderIcon
+			? 'p-2'
+			: ''}"
+	>
+		<img
+			src={source()}
+			alt={name}
+			class="h-auto max-h-full w-full object-contain"
+			loading="lazy"
+			style="image-orientation: from-image;"
+		/>
+	</div>
+
 	{#if name}
 		<div class="max-w-[10rem] text-center text-sm break-all text-black">
-			{#if name.includes('.')}
-				{name.split('.').slice(0, -1).join('').slice(0, NUMBER_OF_CHARACTERS_TO_SHOW) +
-					'.' +
-					name.split('.').pop()}
-			{:else}
-				{name}
-			{/if}
+			{name}
 		</div>
 	{/if}
 </div>

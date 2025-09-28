@@ -35,7 +35,10 @@
 		<MenuBarItem hasArrow>Print</MenuBarItem>
 		<MenuBarItem>Email</MenuBarItem>
 		<MenuBarItem hasArrow
-			><a href="https://www.amazon.com/CD-Burner/s?k=CD+Burner" style="color:inherit;">Burn</a
+			><a
+				href="https://www.amazon.com/CD-Burner/s?k=CD+Burner"
+				style="color:inherit;"
+				target="_blank">Burn</a
 			></MenuBarItem
 		>
 		<MenuBarItem hasArrow>Open</MenuBarItem>
@@ -49,8 +52,14 @@
 	hasMenuBar
 	hasTopBar={false}
 	bodyDirection="column"
+	hasMaxWidth={false}
 >
-	<img class="h-full w-full object-contain p-4 md:p-16 {className}" {src} {alt} />
+	<img
+		class="h-full w-full object-contain p-4 md:p-8 {className}"
+		{src}
+		{alt}
+		style="image-orientation: from-image;"
+	/>
 	<div class="flex h-fit w-full items-center justify-center bg-[#a8c8ea8e]">
 		<PhotoControls onForwardClick={advanceImage} onBackClick={retreatImage} />
 	</div>

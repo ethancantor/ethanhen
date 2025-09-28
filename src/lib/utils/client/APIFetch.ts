@@ -7,11 +7,11 @@ class APIFetch {
         });
 
 
-        console.log('Checking admin status...');
+        // console.log('Checking admin status...');
 
         if (response.ok) {
             const sessionData = await response.json();
-            console.log('Session data:', sessionData.session);
+            // console.log('Session data:', sessionData.session);
             return sessionData.session.isAdmin || false;
         } else {
             console.error('Error fetching session:', response.statusText);

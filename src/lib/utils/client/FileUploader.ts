@@ -27,7 +27,7 @@ class FileUploader {
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
-                            console.log(`Chunk ${chunkCount + 1} uploaded successfully.`);
+                            // console.log(`Chunk ${chunkCount + 1} uploaded successfully.`);
                             offset += CHUNK_SIZE;
                             chunkCount++;
                             // progressCallback(chunkCount === 0 ? 0 : (chunkCount / totalChunks) * 100);

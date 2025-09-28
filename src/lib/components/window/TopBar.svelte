@@ -14,8 +14,17 @@
 
 <div class="flex w-full flex-row items-center justify-start gap-1 md:gap-2">
 	<div class="flex shrink-0 flex-row gap-1 md:me-1">
-		<img src="/nav_arrow.png" alt="logo" class="h-6 w-6" loading="eager" />
-		<img src="/nav_arrow.png" alt="logo" class="h-6 w-6 scale-x-[-1]" loading="eager" />
+		<button onclick={() => history.back()}>
+			<img src="/nav_arrow.png" alt="logo" class="h-6 w-6" loading="eager" />
+		</button>
+		<button onclick={() => history.forward()}>
+			<img
+				src="/nav_arrow.png"
+				alt="logo"
+				class="h-6 w-6 scale-x-[-1] cursor-pointer"
+				loading="eager"
+			/>
+		</button>
 		<img src="/nav_down_arrow.png" alt="down" class="my-auto h-2 w-3" loading="eager" />
 	</div>
 	<div class="flex w-full justify-between pt-2">
@@ -33,3 +42,10 @@
 	</div>
 	<input type="search" placeholder="Search ethanhen" disabled class="hidden sm:block" />
 </div>
+
+<style>
+	button {
+		all: unset;
+		cursor: pointer;
+	}
+</style>

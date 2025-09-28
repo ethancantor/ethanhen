@@ -29,12 +29,12 @@ class CookieFetch {
                 documentCookie.delete('apiKey');
             }
 
-            console.log('API key initialized and stored in cookie', documentCookie.get('apiKey'));
+            // console.log('API key initialized and stored in cookie', documentCookie.get('apiKey'));
         } else {
-            console.log('Using existing API key from cookie:', cookie);
+            // console.log('Using existing API key from cookie:', cookie);
         }
 
-        console.log('CookieFetch initialized:', documentCookie.get('apiKey'));
+        // console.log('CookieFetch initialized:', documentCookie.get('apiKey'));
 
         this.isInitializing = false;
     }

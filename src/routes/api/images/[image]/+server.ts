@@ -1,7 +1,8 @@
 import { exists } from '$lib';
+import { ImageSizes, type ImageSize } from '$lib/types/image';
 import { ATTRIBUTES } from '$lib/utils/server/fs-extensions';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
-import { error, json } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { setAttribute } from 'fs-xattr';
 import fs from 'fs/promises';
 import path from 'path';
@@ -30,9 +31,14 @@ function getImageContentType(filename: string): string {
 	}
 }
 
-export async function GET({ params }: { params: { image: string } }): Promise<Response> {
+type RequestParams = { image: string, size?: ImageSize };
+
+export const GET: RequestHandler<RequestParams> = async ({ params, url }): Promise<Response> => {
 	const filename = decodeURIComponent(params.image);
 	const imagePath = path.join(UPLOAD_DIR, filename);
+
+	// console.log("SERVING IMAGE WITH SCALE PARAMETER:", params, url.searchParams.get('scale'));
+	const scale = (url.searchParams.get('scale') || 'full') as ImageSize;
 
 	try {
 		const imageBuffer = await fs.readFile(imagePath);
@@ -44,10 +50,16 @@ export async function GET({ params }: { params: { image: string } }): Promise<Re
 		}
 
 		const processedImageBuffer = await sharp(imageBuffer)
-			.resize({ width: Math.round(0.5 * (await sharp(imageBuffer).metadata()).width) }) // Scale width by 50%, height auto
+			.resize({
+				width: ImageSizes.get(scale) || undefined,
+				height: ImageSizes.get(scale) || undefined,
+				fit: 'inside',
+				withoutEnlargement: true
+			})
+			.rotate()
 			.toBuffer();
 
-		return new Response(processedImageBuffer, {
+		return new Response(new Uint8Array(processedImageBuffer), {
 			headers: {
 				'Content-Type': contentType,
 				'Cache-Control': 'public, max-age=31536000' // Cache images for a year
@@ -77,7 +89,7 @@ export async function PUT({ request }: { request: Request }): Promise<Response> 
 
 	try {
 		await setAttribute(fullPath, ATTRIBUTES.ORDER, order.toString());
-		console.log(`Set order for "${fullPath}" to ${order}`);
+		// console.log(`Set order for "${fullPath}" to ${order}`);
 	} catch (e: unknown) {
 		throw error(500, { message: `${JSON.stringify(e)}` });
 	}

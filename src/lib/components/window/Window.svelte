@@ -19,7 +19,8 @@
 		bodyDirection = 'row',
 		onClick,
 		id,
-		title
+		title,
+		hasMaxWidth = true
 	}: {
 		children?: Snippet;
 		hasTopBar?: boolean;
@@ -37,6 +38,7 @@
 		onClick?: (event: MouseEvent) => void;
 		id?: string;
 		title?: string;
+		hasMaxWidth?: boolean;
 	} = $props();
 
 	const homeRedirect = () => {
@@ -47,7 +49,9 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="window {active ? 'active' : ''} h-fit w-full max-w-[1000px] {className}"
+	class="window {active ? 'active' : ''} h-fit w-full {hasMaxWidth
+		? 'max-w-[1200px]'
+		: ''} {className}"
 	{style}
 	onclick={onClick}
 	{id}

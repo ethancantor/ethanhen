@@ -34,7 +34,7 @@ export async function load({ url, fetch }) {
 
 		const sessionData = await response.json();
 
-		console.log('Session data:', sessionData.session);
+		// console.log('Session data:', sessionData.session);
 		isAdmin = sessionData.session.isAdmin || false;
 	} catch (e) {
 		console.error('Error during fetch in load function:', e);

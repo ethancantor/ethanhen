@@ -34,17 +34,17 @@
 		const uploadPromises = files.map((file) =>
 			cookieFetch.uploadFileWithKey(file, searchParams || '', (progress) => {
 				finishedPercent += Math.round(progress / files.length);
-				console.log(`File: ${file.name}, Progress: ${finishedPercent}%`);
+				// // console.log(`File: ${file.name}, Progress: ${finishedPercent}%`);
 			})
 		);
 		Promise.allSettled(uploadPromises)
 			.then(() => {
 				files = [];
 				finishedPercent = 100;
-				console.log('Files uploaded successfully');
+				// // console.log('Files uploaded successfully');
 			})
 			.catch((error) => {
-				console.error('Error uploading files:', error);
+				// console.error('Error uploading files:', error);
 			});
 	}
 </script>

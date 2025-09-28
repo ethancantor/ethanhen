@@ -31,7 +31,7 @@
 
 		if (response.ok) {
 			await onSuccess(passwordInput);
-			console.log('Password accepted');
+			// // console.log('Password accepted');
 			error = null;
 			showPassword.set(false);
 		} else {

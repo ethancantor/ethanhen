@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 export async function GET({ url, request }: { url: URL; request: Request }) {
 	const password = url.searchParams.get('password') || '';
-	console.log(request.headers.get('cookie'));
+	// console.log(request.headers.get('cookie'));
 
 	const apiKey = CookieParser.getAPIKey(request);
 

@@ -9,10 +9,12 @@
 	let folders = $derived(data.files.folders.sort((a, b) => a.localeCompare(b)));
 	let files = $derived([...images, ...folders].sort((a, b) => a.localeCompare(b)));
 
-	let selectedImage = $state(-1);
+	let imageIndex = page.url.searchParams.get('imageIndex') || '';
+	let selectedImage = $state(isNaN(Number(imageIndex)) ? -1 : Number(imageIndex));
 
 	function clearImage() {
 		selectedImage = -1;
+		clearParams();
 	}
 
 	function advanceImage() {
@@ -47,20 +49,42 @@
 		await goto(nextPath);
 	}
 
-	let path = page.url.href.replace('/gallery', '') + '/api/images/';
+	function clearParams() {
+		const params = page.url.searchParams;
+		params.delete('imageIndex');
+		const fullURL = `${page.url.pathname}?${params.toString()}`;
+		goto(fullURL, { replaceState: true });
+	}
 </script>
 
 <Window>
 	<LeftBar />
+	<!-- {#if data.isAdmin}
+		<AdminGallery
+			{files}
+			{images}
+			{folders}
+			{path}
+			handleFileClick={(file) => {
+				selectedImage = images.indexOf(file);
+			}}
+			{handleFolderClick}
+		/>
+	{:else} -->
 	<WindowBody title="Picture library" subtitle="Pictures">
 		{#if files && files.length > 0}
 			{#each files as file}
 				{#if images.includes(file)}
 					<FileExplorerImage
 						src={file}
-						name={decodeURIComponent(file).replace(path, '').replaceAll('/', '')}
+						name={decodeURIComponent(file).slice(file.lastIndexOf('/') + 2)}
 						onClick={() => {
-							selectedImage = images.indexOf(file);
+							const imageIndex = images.indexOf(file);
+							selectedImage = imageIndex;
+							const params = page.url.searchParams;
+							params.set('imageIndex', imageIndex.toString());
+							const fullURL = `${page.url.pathname}?${params.toString()}`;
+							goto(fullURL, { replaceState: true });
 						}}
 					/>
 				{:else if folders.includes(file)}
@@ -69,6 +93,7 @@
 			{/each}
 		{/if}
 	</WindowBody>
+	<!-- {/if} -->
 </Window>
 
 {#if selectedImage !== -1}

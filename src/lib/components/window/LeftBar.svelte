@@ -20,7 +20,12 @@
 	/>
 	<MenuIcon src="/windowsIcons/Libraries/imageres_1002.ico" label="Documents" className="ms-5" />
 	<MenuIcon src="/windowsIcons/Libraries/imageres_1004.ico" label="Music" className="ms-5" />
-	<MenuIcon src="/windowsIcons/Libraries/imageres_1003.ico" label="Pictures" className="ms-5" />
+	<MenuIcon
+		src="/windowsIcons/Libraries/imageres_1003.ico"
+		label="Pictures"
+		className="ms-5"
+		href={'/gallery'}
+	/>
 	<MenuIcon src="/windowsIcons/Libraries/imageres_1005.ico" label="Videos" className="ms-5" />
 
 	<!-- Third Group -->
