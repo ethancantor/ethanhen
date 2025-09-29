@@ -17,6 +17,8 @@
 		/>
 		<img src="/mrscruff.jpg" alt="Media Player" class="mx-auto w-[80%]" />
 		<div class="mt-2 h-1 w-full rounded-full outline outline-gray-500"></div>
-		<img src="/media_controls.png" alt="Media Controls" class="ms-7 w-[90%]" />
+		<a href="https://www.youtube.com/watch?v=jZHAb92E31E" target="_blank" rel="noopener noreferrer">
+			<img src="/media_controls.png" alt="Media Controls" class="ms-7 w-[90%]" />
+		</a>
 	</div>
 </Window>

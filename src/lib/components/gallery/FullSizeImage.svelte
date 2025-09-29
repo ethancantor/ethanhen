@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MenuBar, MenuBarItem, PhotoControls, Window } from '$lib';
+	import { onMount, onDestroy } from 'svelte';
 
 	let {
 		src,
@@ -17,7 +18,7 @@
 		retreatImage: () => void;
 	} = $props();
 
-	window.addEventListener('keydown', (event) => {
+	function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault();
 		if (event.key === 'Escape') {
 			clearImage();
@@ -26,6 +27,17 @@
 		} else if (event.key === 'ArrowLeft') {
 			retreatImage();
 		}
+	}
+
+	onMount(() => {
+		window.addEventListener('keydown', handleKeydown);
+		return () => {
+			window.removeEventListener('keydown', handleKeydown);
+		};
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('keydown', handleKeydown);
 	});
 </script>
 

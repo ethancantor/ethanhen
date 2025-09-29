@@ -9,8 +9,8 @@
 	let folders = $derived(data.files.folders.sort((a, b) => a.localeCompare(b)));
 	let files = $derived([...images, ...folders].sort((a, b) => a.localeCompare(b)));
 
-	let imageIndex = page.url.searchParams.get('imageIndex') || '';
-	let selectedImage = $state(isNaN(Number(imageIndex)) ? -1 : Number(imageIndex));
+	let imageIndex = page.url.searchParams.get('imageIndex') || '-1';
+	let selectedImage = $state(parseInt(imageIndex));
 
 	function clearImage() {
 		selectedImage = -1;
@@ -20,13 +20,22 @@
 	function advanceImage() {
 		if (selectedImage < images.length - 1) {
 			selectedImage++;
+			goToImage();
 		}
 	}
 
 	function retreatImage() {
 		if (selectedImage > 0) {
 			selectedImage--;
+			goToImage();
 		}
+	}
+
+	function goToImage(imageIndex: number = selectedImage) {
+		const params = page.url.searchParams;
+		params.set('imageIndex', imageIndex.toString());
+		const fullURL = `${page.url.pathname}?${params.toString()}`;
+		goto(fullURL, { replaceState: true });
 	}
 
 	let modalContentRef = $state<HTMLDivElement | null>(null);
@@ -81,10 +90,7 @@
 						onClick={() => {
 							const imageIndex = images.indexOf(file);
 							selectedImage = imageIndex;
-							const params = page.url.searchParams;
-							params.set('imageIndex', imageIndex.toString());
-							const fullURL = `${page.url.pathname}?${params.toString()}`;
-							goto(fullURL, { replaceState: true });
+							goToImage(imageIndex);
 						}}
 					/>
 				{:else if folders.includes(file)}
