@@ -1,26 +1,53 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { DefaultUpload, UploadWithFiles, PasswordModal } from '$lib';
+	import type { UploadItem } from '$lib/types/upload';
 	import { apiFetch } from '$lib/utils/client/APIFetch';
 	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 	import { showPassword } from '$lib/utils/client/writables';
 
-	let files: File[] = $state([]);
-	let finishedPercent = $state(0);
+	let uploadItems: UploadItem[] = $state([]);
 
-	const searchParams = page.url.searchParams.get('path');
+	const uploadPath = page.url.searchParams.get('path') ?? '';
+
+	function addFiles(files: FileList) {
+		for (const file of files) {
+			uploadItems.push({
+				id: crypto.randomUUID(),
+				file,
+				progress: 0,
+				status: 'pending'
+			});
+		}
+	}
 
 	async function handleFileDrop(event: DragEvent) {
 		event.preventDefault();
-		if (event.dataTransfer?.files) {
-			files.push(...Array.from(event.dataTransfer.files));
+		if (!event.dataTransfer?.files.length) {
+			return;
 		}
 
+		addFiles(event.dataTransfer.files);
 		handleFileUpload();
 	}
 
-	function removeFile(file: File) {
-		files = files.filter((f) => f !== file);
+	function removeFile(item: UploadItem) {
+		uploadItems = uploadItems.filter((uploadItem) => uploadItem.id !== item.id);
+	}
+
+	async function uploadItem(item: UploadItem) {
+		item.status = 'uploading';
+
+		try {
+			await cookieFetch.uploadFileWithKey(item.file, uploadPath, (progress) => {
+				item.progress = progress;
+			});
+			item.progress = 100;
+			item.status = 'done';
+		} catch (error) {
+			item.status = 'error';
+			console.error(`Error uploading ${item.file.name}:`, error);
+		}
 	}
 
 	async function handleFileUpload() {
@@ -30,31 +57,17 @@
 			return;
 		}
 
-		finishedPercent = 0;
-		const uploadPromises = files.map((file) =>
-			cookieFetch.uploadFileWithKey(file, searchParams || '', (progress) => {
-				finishedPercent += Math.round(progress / files.length);
-				// // console.log(`File: ${file.name}, Progress: ${finishedPercent}%`);
-			})
-		);
-		Promise.allSettled(uploadPromises)
-			.then(() => {
-				files = [];
-				finishedPercent = 100;
-				// // console.log('Files uploaded successfully');
-			})
-			.catch((error) => {
-				// console.error('Error uploading files:', error);
-			});
+		const pendingItems = uploadItems.filter((item) => item.status === 'pending');
+		await Promise.allSettled(pendingItems.map(uploadItem));
 	}
 </script>
 
 {#if $showPassword}
-	<PasswordModal onSuccess={async () => handleFileUpload()} />
+	<PasswordModal onSuccess={handleFileUpload} />
 {/if}
 
-{#if files.length > 0}
-	<UploadWithFiles {handleFileDrop} {files} {removeFile} {finishedPercent} />
+{#if uploadItems.length > 0}
+	<UploadWithFiles {handleFileDrop} {uploadItems} {removeFile} />
 {:else}
 	<DefaultUpload {handleFileDrop} />
 {/if}
