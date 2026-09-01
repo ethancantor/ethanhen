@@ -12,31 +12,18 @@
 		removeFile: (item: UploadItem) => void;
 	} = $props();
 
-	const finishedPercent = $derived.by(() => {
-		if (uploadItems.length === 0) {
-			return 0;
-		}
-
-		const total = uploadItems.reduce((sum, item) => sum + item.progress, 0);
-		return Math.round(total / uploadItems.length);
-	});
+	const finishedPercent = $derived(
+		Math.round(uploadItems.reduce((sum, item) => sum + item.progress, 0) / uploadItems.length)
+	);
 
 	const hasError = $derived(uploadItems.some((item) => item.status === 'error'));
-	const isComplete = $derived(
-		uploadItems.length > 0 && uploadItems.every((item) => item.status === 'done')
-	);
+	const isComplete = $derived(uploadItems.every((item) => item.status === 'done'));
 	const isUploading = $derived(uploadItems.some((item) => item.status === 'uploading'));
 
 	const statusLabel = $derived.by(() => {
-		if (hasError) {
-			return 'Upload failed';
-		}
-		if (isComplete) {
-			return 'Upload complete';
-		}
-		if (isUploading) {
-			return 'Uploading...';
-		}
+		if (hasError) return 'Upload failed';
+		if (isComplete) return 'Upload complete';
+		if (isUploading) return 'Uploading...';
 		return '';
 	});
 

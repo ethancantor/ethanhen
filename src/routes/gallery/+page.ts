@@ -5,12 +5,11 @@ import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 export const ssr = false;
 
 export async function load({ url, fetch }) {
-	let files: ImageAPIResponse = { images: [], folders: [] };
+	let files: ImageAPIResponse = { entries: [] };
 
 	const params = url.searchParams.get('path');
 
 	try {
-		// Fetch image URLs from your custom API endpoint
 		const path = '/api/images' + (params !== null ? `?path=${encodeURIComponent(params)}` : '');
 		const response = await cookieFetch.fetchWithKey(path, undefined, fetch);
 
@@ -33,10 +32,8 @@ export async function load({ url, fetch }) {
 		console.error('Error checking admin status:', e);
 	}
 
-	// console.log(files);
-
 	return {
 		files,
-		isAdmin,
+		isAdmin
 	};
 }

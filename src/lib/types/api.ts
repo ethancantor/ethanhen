@@ -1,6 +1,9 @@
+export type GalleryEntry =
+	| { type: 'image'; url: string }
+	| { type: 'folder'; name: string };
+
 export type ImageAPIResponse = {
-	images: string[];
-	folders: string[];
+	entries: GalleryEntry[];
 };
 
 export type FetchFunc = {

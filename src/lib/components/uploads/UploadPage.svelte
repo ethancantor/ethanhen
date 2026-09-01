@@ -10,8 +10,10 @@
 
 	const uploadPath = page.url.searchParams.get('path') ?? '';
 
-	function addFiles(files: FileList) {
-		for (const file of files) {
+	async function handleFileDrop(event: DragEvent) {
+		event.preventDefault();
+
+		for (const file of event.dataTransfer?.files ?? []) {
 			uploadItems.push({
 				id: crypto.randomUUID(),
 				file,
@@ -19,15 +21,7 @@
 				status: 'pending'
 			});
 		}
-	}
 
-	async function handleFileDrop(event: DragEvent) {
-		event.preventDefault();
-		if (!event.dataTransfer?.files.length) {
-			return;
-		}
-
-		addFiles(event.dataTransfer.files);
 		handleFileUpload();
 	}
 

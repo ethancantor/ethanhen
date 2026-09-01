@@ -5,12 +5,17 @@
 
 	let { data } = $props();
 
-	let images = $derived(data.files.images.sort((a, b) => a.localeCompare(b)));
-	let folders = $derived(data.files.folders.sort((a, b) => a.localeCompare(b)));
-	let files = $derived([...images, ...folders].sort((a, b) => a.localeCompare(b)));
+	let entries = $derived(data.files.entries);
+	let images = $derived(
+		entries.filter((entry) => entry.type === 'image').map((entry) => entry.url)
+	);
 
 	let imageIndex = page.url.searchParams.get('imageIndex') || '-1';
 	let selectedImage = $state(parseInt(imageIndex));
+
+	function imageName(url: string): string {
+		return decodeURIComponent(url).slice(url.lastIndexOf('/') + 1);
+	}
 
 	function clearImage() {
 		selectedImage = -1;
@@ -53,8 +58,6 @@
 		const nextPath = `/gallery?path=${encodeURIComponent(`${currentPath}/${folderName}`)}`;
 
 		await invalidateAll();
-
-		// nav to new path
 		await goto(nextPath);
 	}
 
@@ -68,38 +71,25 @@
 
 <Window>
 	<LeftBar />
-	<!-- {#if data.isAdmin}
-		<AdminGallery
-			{files}
-			{images}
-			{folders}
-			{path}
-			handleFileClick={(file) => {
-				selectedImage = images.indexOf(file);
-			}}
-			{handleFolderClick}
-		/>
-	{:else} -->
 	<WindowBody title="Picture library" subtitle="Pictures">
-		{#if files && files.length > 0}
-			{#each files as file}
-				{#if images.includes(file)}
+		{#if entries.length > 0}
+			{#each entries as entry (entry.type === 'image' ? entry.url : entry.name)}
+				{#if entry.type === 'image'}
 					<FileExplorerImage
-						src={file}
-						name={decodeURIComponent(file).slice(file.lastIndexOf('/') + 2)}
+						src={entry.url}
+						name={imageName(entry.url)}
 						onClick={() => {
-							const imageIndex = images.indexOf(file);
-							selectedImage = imageIndex;
-							goToImage(imageIndex);
+							const index = images.indexOf(entry.url);
+							selectedImage = index;
+							goToImage(index);
 						}}
 					/>
-				{:else if folders.includes(file)}
-					<FileExplorerImage name={file} onClick={() => handleFolderClick(file)} />
+				{:else}
+					<FileExplorerImage name={entry.name} onClick={() => handleFolderClick(entry.name)} />
 				{/if}
 			{/each}
 		{/if}
 	</WindowBody>
-	<!-- {/if} -->
 </Window>
 
 {#if selectedImage !== -1}

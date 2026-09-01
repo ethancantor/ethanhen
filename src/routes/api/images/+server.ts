@@ -1,11 +1,10 @@
-// src/routes/api/images/+server.js
 import { exists } from '$lib';
-import { ATTRIBUTES } from '$lib/utils/server/fs-extensions.js';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
-import { getAttribute } from 'fs-xattr';
 import fs from 'fs/promises';
 import path from 'path';
+
+const IMAGE_REGEX = /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i;
 
 export async function GET({ url }): Promise<Response> {
 	await fs.mkdir(UPLOAD_DIR, { recursive: true });
@@ -19,26 +18,32 @@ export async function GET({ url }): Promise<Response> {
 
 	try {
 		const files = await fs.readdir(fullPath, { withFileTypes: true });
-
-		const orders = await Promise.all(
-			files.map(async (file, index) => ({
+		const withStats = await Promise.all(
+			files.map(async (file) => ({
 				file,
-				order: await getAttribute(path.join(fullPath, file.name),
-					ATTRIBUTES.ORDER).then(attr => Number(attr.toString())).catch(() => index)
+				stat: await fs.stat(path.join(fullPath, file.name))
 			}))
 		);
 
-		const imageFiles = orders
-			.filter((order) => /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i.test(order.file.name))
-			.sort((a, b) => a.order - b.order)
-			.map(
-				(order) =>
-					`${url.origin}/api/images/${encodeURIComponent(`${order.file.parentPath.replace(UPLOAD_DIR, '')}/${order.file.name}`)}`
-			);
+		withStats.sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs);
 
-		const folders = files.filter((file) => file.isDirectory()).map((file) => file.name);
+		const entries = [];
+		for (const { file } of withStats) {
+			if (file.isDirectory()) {
+				entries.push({ type: 'folder' as const, name: file.name });
+				continue;
+			}
 
-		return json({ images: imageFiles, folders }, { status: 200 });
+			if (!IMAGE_REGEX.test(file.name)) {
+				continue;
+			}
+
+			const relativePath = path.relative(UPLOAD_DIR, path.join(fullPath, file.name));
+			const imageUrl = `${url.origin}/api/images/${encodeURIComponent(relativePath)}`;
+			entries.push({ type: 'image' as const, url: imageUrl });
+		}
+
+		return json({ entries }, { status: 200 });
 	} catch (e) {
 		console.error(`Error reading image directory "${UPLOAD_DIR}":`, e);
 		throw error(500, { message: 'Failed to retrieve images.' });

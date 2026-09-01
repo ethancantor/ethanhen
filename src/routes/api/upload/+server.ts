@@ -3,6 +3,7 @@ import { CookieParser } from '$lib/utils/server/CookieParser';
 import { sessionManager } from '$lib/utils/server/SessionManager';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
+import exifr from 'exifr';
 import fs from 'fs/promises';
 import { join } from 'node:path';
 
@@ -55,9 +56,10 @@ export async function POST({ request }: { request: Request }) {
 
 	try {
 		const formData = await request.formData();
-		const { fileChunk, fileName, fileSize, chunkIndex, totalChunks } = Object.fromEntries(formData.entries());
+		const { fileChunk, fileName, fileSize, chunkIndex, totalChunks, fileLastModified } =
+			Object.fromEntries(formData.entries());
 
-		if (!fileChunk || !fileName || !fileSize || !chunkIndex || !totalChunks) {
+		if (!fileChunk || !fileName || !fileSize || chunkIndex === undefined || !totalChunks) {
 			return error(400, { message: 'Missing required form data.' });
 		}
 
@@ -65,17 +67,21 @@ export async function POST({ request }: { request: Request }) {
 		const arrayBuffer = await (fileChunk as Blob).arrayBuffer();
 		const chunkBuffer = Buffer.from(arrayBuffer);
 
-		try {
-			fs.appendFile(filePath, chunkBuffer);
-		} catch (err) {
-			console.error('Error appending chunk:', err);
-			return error(500, { message: 'Error saving chunk.' });
+		await fs.appendFile(filePath, chunkBuffer);
+
+		const isLastChunk = Number(chunkIndex) === Number(totalChunks) - 1;
+		if (isLastChunk) {
+			const exif = await exifr
+				.parse(filePath, { pick: ['DateTimeOriginal', 'CreateDate', 'ModifyDate'] })
+				.catch(() => ({}));
+			const fileDate =
+				exif.DateTimeOriginal ?? exif.CreateDate ?? exif.ModifyDate ?? new Date(Number(fileLastModified));
+			await fs.utimes(filePath, fileDate, fileDate);
 		}
 	} catch (err) {
 		console.error('Error processing upload:', err);
 		return error(500, { message: 'Error processing upload.' });
 	}
-
 
 	return json({ message: 'File uploaded successfully!' }, { status: 200 });
 }

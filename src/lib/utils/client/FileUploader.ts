@@ -8,16 +8,10 @@ class FileUploader {
 		uploadDir: string
 	): Promise<void> {
 		return new Promise((resolve, reject) => {
-			if (file.size === 0) {
-				progressCallback(100);
-				resolve();
-				return;
-			}
-
 			let offset = 0;
 			let chunkCount = 0;
 			const chunkSize = this.CHUNK_SIZE;
-			const totalChunks = Math.ceil(file.size / chunkSize);
+			const totalChunks = Math.max(1, Math.ceil(file.size / chunkSize));
 
 			const uploadChunk = () => {
 				const chunk = file.slice(offset, offset + chunkSize);
@@ -27,6 +21,7 @@ class FileUploader {
 				formData.append('fileSize', file.size.toString());
 				formData.append('chunkIndex', chunkCount.toString());
 				formData.append('totalChunks', totalChunks.toString());
+				formData.append('fileLastModified', file.lastModified.toString());
 
 				const xhr = new XMLHttpRequest();
 				xhr.open('POST', url, true);
@@ -47,7 +42,7 @@ class FileUploader {
 					}
 
 					chunkCount++;
-					progressCallback(Math.min(100, Math.round((chunkCount / totalChunks) * 100)));
+					progressCallback(Math.round((chunkCount / totalChunks) * 100));
 
 					if (chunkCount >= totalChunks) {
 						resolve();
