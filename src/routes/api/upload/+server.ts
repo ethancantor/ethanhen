@@ -1,6 +1,5 @@
 import { exists } from '$lib';
-import { CookieParser } from '$lib/utils/server/CookieParser';
-import { sessionManager } from '$lib/utils/server/SessionManager';
+import { requireAdmin } from '$lib/utils/server/require-admin';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import exifr from 'exifr';
@@ -29,17 +28,7 @@ export async function GET({ url }: { url: URL }) {
 }
 
 export async function POST({ request }: { request: Request }) {
-	const apiKey = CookieParser.getAPIKey(request);
-
-	if (!apiKey) {
-		return json({ message: 'missing key' }, { status: 401 });
-	}
-
-	const validKey = sessionManager.getSession(apiKey);
-
-	if (!validKey || !validKey.isAdmin) {
-		return json({ message: 'invalid key' }, { status: 401 });
-	}
+	requireAdmin(request);
 
 	if (!request.body) {
 		return new Response('No files uploaded', { status: 400 });
@@ -71,9 +60,10 @@ export async function POST({ request }: { request: Request }) {
 
 		const isLastChunk = Number(chunkIndex) === Number(totalChunks) - 1;
 		if (isLastChunk) {
-			const exif = await exifr
-				.parse(filePath, { pick: ['DateTimeOriginal', 'CreateDate', 'ModifyDate'] })
-				.catch(() => ({}));
+			const exif =
+				(await exifr
+					.parse(filePath, { pick: ['DateTimeOriginal', 'CreateDate', 'ModifyDate'] })
+					.catch(() => null)) ?? {};
 			const fileDate =
 				exif.DateTimeOriginal ?? exif.CreateDate ?? exif.ModifyDate ?? new Date(Number(fileLastModified));
 			await fs.utimes(filePath, fileDate, fileDate);

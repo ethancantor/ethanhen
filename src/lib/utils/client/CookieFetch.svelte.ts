@@ -18,20 +18,23 @@ class CookieFetch {
         if (!cookie) {
             try {
                 const response = await fetchFn('/api/session', {
-                    method: 'POST'
+                    method: 'POST',
+                    credentials: 'same-origin'
                 });
                 const { session } = await response.json();
 
-                documentCookie.set('apiKey', session.id, DEFAULT_SESSION_LENGTH); // Store for 2 hours
+                documentCookie.set(
+                    'apiKey',
+                    session.id,
+                    DEFAULT_SESSION_LENGTH / (60 * 60 * 1000)
+                );
                 this.isInitialized = true;
             } catch (error) {
                 console.error('Failed to initialize API key:', error);
                 documentCookie.delete('apiKey');
             }
-
-            // console.log('API key initialized and stored in cookie', documentCookie.get('apiKey'));
         } else {
-            // console.log('Using existing API key from cookie:', cookie);
+            this.isInitialized = true;
         }
 
         // console.log('CookieFetch initialized:', documentCookie.get('apiKey'));
@@ -54,7 +57,10 @@ class CookieFetch {
             await this.initialize();
         }
 
-        return await fetchFn(input, init);
+        return await fetchFn(input, {
+            credentials: 'same-origin',
+            ...init
+        });
     }
 
     async uploadFileWithKey(

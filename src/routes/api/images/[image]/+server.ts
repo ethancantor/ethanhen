@@ -1,12 +1,24 @@
 import { exists } from '$lib';
 import { ImageSizes, type ImageSize } from '$lib/types/image';
 import { ATTRIBUTES } from '$lib/utils/server/fs-extensions';
+import { requireAdmin } from '$lib/utils/server/require-admin';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { setAttribute } from 'fs-xattr';
 import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
+
+function resolveUploadPath(relativePath: string): string {
+	const imagePath = path.resolve(UPLOAD_DIR, relativePath);
+	const uploadRoot = path.resolve(UPLOAD_DIR);
+
+	if (imagePath !== uploadRoot && !imagePath.startsWith(`${uploadRoot}${path.sep}`)) {
+		throw error(400, { message: 'Invalid path.' });
+	}
+
+	return imagePath;
+}
 
 function getImageContentType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
@@ -79,7 +91,29 @@ export const GET: RequestHandler<RequestParams> = async ({ params, url }): Promi
 	}
 }
 
+export const DELETE: RequestHandler<RequestParams> = async ({ request, params }): Promise<Response> => {
+	requireAdmin(request);
+
+	const filename = decodeURIComponent(params.image);
+	const imagePath = resolveUploadPath(filename);
+
+	if (!(await exists(imagePath))) {
+		throw error(404, { message: 'Image not found.' });
+	}
+
+	const stat = await fs.stat(imagePath);
+	if (stat.isDirectory()) {
+		throw error(400, { message: 'Cannot delete a folder.' });
+	}
+
+	await fs.unlink(imagePath);
+
+	return json({ success: true });
+};
+
 export async function PUT({ request }: { request: Request }): Promise<Response> {
+	requireAdmin(request);
+
 	const { order, path } = await request.json();
 
 	const fullPath = path ? path.join(UPLOAD_DIR, decodeURIComponent(path)) : UPLOAD_DIR;

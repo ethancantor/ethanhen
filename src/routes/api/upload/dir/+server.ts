@@ -1,22 +1,11 @@
-import { CookieParser } from '$lib/utils/server/CookieParser';
-import { sessionManager } from '$lib/utils/server/SessionManager';
+import { requireAdmin } from '$lib/utils/server/require-admin';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import 'dotenv/config';
 import fs from 'fs/promises';
 
 export async function POST({ request }: { request: Request }) {
-	const apiKey = CookieParser.getAPIKey(request);
-
-	if (!apiKey) {
-		return error(404, 'missing key');
-	}
-
-	const validKey = sessionManager.getSession(apiKey);
-
-	if (!validKey || !validKey.isAdmin) {
-		return error(401, 'invalid key');
-	}
+	requireAdmin(request);
 
 	if (!request.body) {
 		return error(400, 'No dir uploaded');

@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { FileExplorerImage, FullSizeImage, LeftBar, Window, WindowBody } from '$lib';
+	import { FileExplorerImage, FullSizeImage, LeftBar, PasswordModal, Window, WindowBody } from '$lib';
+	import { apiFetch } from '$lib/utils/client/APIFetch';
+	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
+	import { showPassword } from '$lib/utils/client/writables';
 
 	let { data } = $props();
 
+	let isAdmin = $state(false);
 	let entries = $derived(data.files.entries);
 	let images = $derived(
 		entries.filter((entry) => entry.type === 'image').map((entry) => entry.url)
@@ -13,8 +17,23 @@
 	let imageIndex = page.url.searchParams.get('imageIndex') || '-1';
 	let selectedImage = $state(parseInt(imageIndex));
 
+	$effect(() => {
+		data.isAdmin;
+		void refreshAdminStatus();
+	});
+
+	async function refreshAdminStatus() {
+		isAdmin = await apiFetch.checkAdmin();
+	}
+
 	function imageName(url: string): string {
 		return decodeURIComponent(url).slice(url.lastIndexOf('/') + 1);
+	}
+
+	function imagePathFromUrl(imageUrl: string): string {
+		const marker = '/api/images/';
+		const index = imageUrl.indexOf(marker);
+		return decodeURIComponent(imageUrl.slice(index + marker.length));
 	}
 
 	function clearImage() {
@@ -67,17 +86,62 @@
 		const fullURL = `${page.url.pathname}?${params.toString()}`;
 		goto(fullURL, { replaceState: true });
 	}
+
+	async function deleteImage(url: string) {
+		if (!(await apiFetch.checkAdmin())) {
+			isAdmin = false;
+			showPassword.set(true);
+			return;
+		}
+
+		if (!confirm(`Delete ${imageName(url)}?`)) {
+			return;
+		}
+
+		const relativePath = imagePathFromUrl(url);
+		const response = await cookieFetch.fetchWithKey(
+			`/api/images/${encodeURIComponent(relativePath)}`,
+			{ method: 'DELETE' }
+		);
+
+		if (response.status === 401) {
+			isAdmin = false;
+			showPassword.set(true);
+			return;
+		}
+
+		if (!response.ok) {
+			console.error('Failed to delete image:', response.statusText);
+			return;
+		}
+
+		if (selectedImage !== -1) {
+			clearImage();
+		}
+
+		await invalidateAll();
+	}
+
+	async function onPasswordSuccess() {
+		await refreshAdminStatus();
+		await invalidateAll();
+	}
 </script>
+
+{#if $showPassword}
+	<PasswordModal onSuccess={onPasswordSuccess} />
+{/if}
 
 <Window>
 	<LeftBar />
-	<WindowBody title="Picture library" subtitle="Pictures">
+	<WindowBody title="Picture library" subtitle={isAdmin ? 'Pictures (Admin)' : 'Pictures'}>
 		{#if entries.length > 0}
 			{#each entries as entry (entry.type === 'image' ? entry.url : entry.name)}
 				{#if entry.type === 'image'}
 					<FileExplorerImage
 						src={entry.url}
 						name={imageName(entry.url)}
+						onDelete={isAdmin ? () => deleteImage(entry.url) : undefined}
 						onClick={() => {
 							const index = images.indexOf(entry.url);
 							selectedImage = index;
@@ -88,6 +152,18 @@
 					<FileExplorerImage name={entry.name} onClick={() => handleFolderClick(entry.name)} />
 				{/if}
 			{/each}
+		{:else if isAdmin}
+			<p class="text-sm text-gray-600">No pictures in this folder.</p>
+		{/if}
+
+		{#if !isAdmin}
+			<button
+				type="button"
+				class="mt-2 text-sm text-[#1672cc] underline"
+				onclick={() => showPassword.set(true)}
+			>
+				Admin sign in
+			</button>
 		{/if}
 	</WindowBody>
 </Window>
@@ -107,6 +183,7 @@
 				{clearImage}
 				{advanceImage}
 				{retreatImage}
+				onDelete={isAdmin ? () => deleteImage(images[selectedImage]) : undefined}
 			/>
 		</div>
 	</div>

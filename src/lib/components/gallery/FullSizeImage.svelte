@@ -8,7 +8,8 @@
 		className = '',
 		clearImage,
 		advanceImage,
-		retreatImage
+		retreatImage,
+		onDelete
 	}: {
 		src: string;
 		alt?: string;
@@ -16,6 +17,7 @@
 		clearImage: () => void;
 		advanceImage: () => void;
 		retreatImage: () => void;
+		onDelete?: () => void;
 	} = $props();
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -54,6 +56,9 @@
 			></MenuBarItem
 		>
 		<MenuBarItem hasArrow>Open</MenuBarItem>
+		{#if onDelete}
+			<MenuBarItem onClick={onDelete}>Delete</MenuBarItem>
+		{/if}
 	</MenuBar>
 {/snippet}
 
