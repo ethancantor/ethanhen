@@ -6,7 +6,11 @@ import path from 'path';
 
 const IMAGE_REGEX = /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)$/i;
 
-export async function GET({ url }): Promise<Response> {
+function uploadTime(stat: Awaited<ReturnType<typeof fs.stat>>): number {
+	return Number(stat.birthtimeMs || stat.ctimeMs);
+}
+
+export async function GET({ url }: { url: URL }): Promise<Response> {
 	await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
 	const paramPath = url.searchParams.get('path');
@@ -25,7 +29,7 @@ export async function GET({ url }): Promise<Response> {
 			}))
 		);
 
-		withStats.sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs);
+		withStats.sort((a, b) => uploadTime(b.stat) - uploadTime(a.stat));
 
 		const entries = [];
 		for (const { file } of withStats) {
