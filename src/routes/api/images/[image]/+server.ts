@@ -10,8 +10,8 @@ import path from 'path';
 import sharp from 'sharp';
 
 function resolveUploadPath(relativePath: string): string {
-	const imagePath = path.resolve(UPLOAD_DIR, relativePath);
 	const uploadRoot = path.resolve(UPLOAD_DIR);
+	const imagePath = path.resolve(uploadRoot, relativePath.replace(/^\/+/, ''));
 
 	if (imagePath !== uploadRoot && !imagePath.startsWith(`${uploadRoot}${path.sep}`)) {
 		throw error(400, { message: 'Invalid path.' });
@@ -97,16 +97,15 @@ export const DELETE: RequestHandler<RequestParams> = async ({ request, params })
 	const filename = decodeURIComponent(params.image);
 	const imagePath = resolveUploadPath(filename);
 
+	if (imagePath === path.resolve(UPLOAD_DIR)) {
+		throw error(400, { message: 'Invalid path.' });
+	}
+
 	if (!(await exists(imagePath))) {
-		throw error(404, { message: 'Image not found.' });
+		throw error(404, { message: 'Not found.' });
 	}
 
-	const stat = await fs.stat(imagePath);
-	if (stat.isDirectory()) {
-		throw error(400, { message: 'Cannot delete a folder.' });
-	}
-
-	await fs.unlink(imagePath);
+	await fs.rm(imagePath, { recursive: true });
 
 	return json({ success: true });
 };

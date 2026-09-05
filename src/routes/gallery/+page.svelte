@@ -2,6 +2,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { FileExplorerImage, FullSizeImage, LeftBar, Window, WindowBody } from '$lib';
+	import Console from '$lib/components/shared/Console.svelte';
 	import { requestAdmin } from '$lib/utils/client/admin';
 	import { apiFetch } from '$lib/utils/client/APIFetch';
 	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
@@ -78,39 +79,61 @@
 		goto(fullURL, { replaceState: true });
 	}
 
-	async function deleteImage(url: string) {
+	function folderRelativePath(name: string): string {
+		const current = (page.url.searchParams.get('path') || '').replace(/^\/+|\/+$/g, '');
+		return current ? `${current}/${name}` : name;
+	}
+
+	let pendingDelete = $state<{ relativePath: string; label: string } | null>(null);
+
+	async function askDelete(relativePath: string, label: string) {
 		if (!(await apiFetch.checkAdmin())) {
 			isAdmin.set(false);
-			requestAdmin(() => deleteImage(url));
+			requestAdmin(() => askDelete(relativePath, label));
 			return;
 		}
 
-		if (!confirm(`Delete ${imageName(url)}?`)) {
+		pendingDelete = { relativePath, label };
+	}
+
+	async function performDelete(job = pendingDelete) {
+		if (!job) {
 			return;
 		}
 
-		const relativePath = imagePathFromUrl(url);
+		pendingDelete = null;
+
 		const response = await cookieFetch.fetchWithKey(
-			`/api/images/${encodeURIComponent(relativePath)}`,
+			`/api/images/${encodeURIComponent(job.relativePath)}`,
 			{ method: 'DELETE' }
 		);
 
 		if (response.status === 401) {
 			isAdmin.set(false);
-			requestAdmin(() => deleteImage(url));
+			requestAdmin(() => performDelete(job));
 			return;
 		}
 
 		if (!response.ok) {
-			console.error('Failed to delete image:', response.statusText);
+			console.error('Failed to delete:', response.statusText);
 			return;
 		}
 
-		if (selectedImage !== -1) {
+		if (selectedImage !== -1 && imagePathFromUrl(images[selectedImage]) === job.relativePath) {
 			clearImage();
 		}
 
 		await invalidateAll();
+	}
+
+	function onDeletePrompt(input: string) {
+		const answer = input.trim().toLowerCase();
+		if (answer === 'y' || answer === 'yes') {
+			void performDelete();
+			return;
+		}
+
+		pendingDelete = null;
 	}
 </script>
 
@@ -123,7 +146,7 @@
 					<FileExplorerImage
 						src={entry.url}
 						name={imageName(entry.url)}
-						onDelete={$isAdmin ? () => deleteImage(entry.url) : undefined}
+						onDelete={$isAdmin ? () => askDelete(imagePathFromUrl(entry.url), imageName(entry.url)) : undefined}
 						onClick={() => {
 							const index = images.indexOf(entry.url);
 							selectedImage = index;
@@ -131,7 +154,11 @@
 						}}
 					/>
 				{:else}
-					<FileExplorerImage name={entry.name} onClick={() => handleFolderClick(entry.name)} />
+					<FileExplorerImage
+						name={entry.name}
+						onClick={() => handleFolderClick(entry.name)}
+						onDelete={$isAdmin ? () => askDelete(folderRelativePath(entry.name), entry.name) : undefined}
+					/>
 				{/if}
 			{/each}
 		{:else if $isAdmin}
@@ -155,8 +182,19 @@
 				{clearImage}
 				{advanceImage}
 				{retreatImage}
-				onDelete={$isAdmin ? () => deleteImage(images[selectedImage]) : undefined}
+				onDelete={$isAdmin
+					? () =>
+							askDelete(imagePathFromUrl(images[selectedImage]), imageName(images[selectedImage]))
+					: undefined}
 			/>
 		</div>
 	</div>
+{/if}
+
+{#if pendingDelete}
+	<Console
+		prompt={`del ${pendingDelete.label}\nare you sure?\nthis will delete the file or folder permanently. (y/n): `}
+		onEnter={onDeletePrompt}
+		onClose={() => (pendingDelete = null)}
+	/>
 {/if}

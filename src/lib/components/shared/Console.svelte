@@ -1,44 +1,72 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { Window } from '$lib';
 	import { onSubmit } from '$lib/utils/client/console-options';
+	import { onMount } from 'svelte';
+
+	let {
+		prompt = '',
+		onEnter,
+		onClose
+	}: {
+		prompt?: string;
+		onEnter?: (input: string) => void;
+		onClose?: () => void;
+	} = $props();
 
 	let input = $state('');
+	let divElement: HTMLDivElement | null = $state(null);
 
 	function handleKeyDown(event: KeyboardEvent) {
+		event.stopPropagation();
+
 		if (event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
 
+		if (event.key === 'Escape') {
+			onClose?.();
+			return;
+		}
+
 		if (event.key === 'Enter') {
-			onSubmit(input, (newInput: string) => (input = newInput));
+			if (onEnter) {
+				onEnter(input);
+				input = '';
+			} else {
+				onSubmit(input, (newInput: string) => (input = newInput));
+			}
 		} else if (event.key === 'Backspace') {
 			input = input.slice(0, -1);
 		} else if (event.key.length === 1) {
 			input += event.key;
 		}
 	}
+
+	onMount(() => {
+		divElement?.focus();
+	});
 </script>
 
-<div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit max-w-[90vw] translate-x-[-50%]">
+<div class="fixed inset-0 top-[30%] left-[50%] z-[100] h-fit w-fit max-w-[90vw] translate-x-[-50%]">
 	<Window
 		hasMenuBar={false}
 		hasTopBar={false}
 		title="C:\Windows\System32\cmd.exe"
 		titleIcon="/windowsIcons/Default Programs/cmd_IDI_APPICON.ico"
+		onCloseClick={onClose}
+		onMinimizeClick={onClose}
 	>
 		<div
-			class="console-font h-40 w-96 overflow-y-auto bg-black text-wrap break-all text-white"
+			class="console-font h-40 w-96 overflow-y-auto bg-black text-wrap break-all whitespace-pre-wrap text-white"
 			onkeydown={handleKeyDown}
+			bind:this={divElement}
 			tabindex="0"
 			role="textbox"
 			aria-label="Password input"
 		>
 			<!-- Version number was specifically requested by client -->
 			(c) Microsoft Corporation. All rights reserved.<br /><br />
-			C:\Users\ethanhen>
-			<span>{input.trim()}</span>
-			<span class="blinking-text">_</span>
+			C:\Users\ethanhen>{prompt}<span>{input.trim()}</span><span class="blinking-text">_</span>
 		</div>
 	</Window>
 </div>
