@@ -11,7 +11,7 @@
 	{#if children}
 		{@render children()}
 	{/if}
-	<MenuBarItem onClick={() => void toggleAdmin()}>{$isAdmin ? 'Logout' : 'Login'}</MenuBarItem>
+	<MenuBarItem onClick={() => void toggleAdmin()}>{$isAdmin ? 'Undo' : 'Edit'}</MenuBarItem>
 	{#if hasIcons}
 		<div
 			class="absolute top-0 right-0 me-2 flex translate-y-[50%] flex-row items-center gap-1 overflow-hidden md:gap-5"
