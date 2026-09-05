@@ -11,12 +11,10 @@
 	let { data } = $props();
 
 	let entries = $derived(data.files.entries);
-	let images = $derived(
-		entries.filter((entry) => entry.type === 'image').map((entry) => entry.url)
+	let images = $derived(entries.flatMap((entry) => (entry.type === 'image' ? [entry] : [])));
+	let selectedIndex = $derived(
+		images.findIndex((image) => image.id === page.url.searchParams.get('image'))
 	);
-
-	let imageIndex = page.url.searchParams.get('imageIndex') || '-1';
-	let selectedImage = $state(parseInt(imageIndex));
 
 	function imageName(url: string): string {
 		return decodeURIComponent(url).slice(url.lastIndexOf('/') + 1);
@@ -29,27 +27,25 @@
 	}
 
 	function clearImage() {
-		selectedImage = -1;
 		clearParams();
 	}
 
 	function advanceImage() {
-		if (selectedImage < images.length - 1) {
-			selectedImage++;
-			goToImage();
+		if (selectedIndex < images.length - 1) {
+			goToImage(images[selectedIndex + 1].id);
 		}
 	}
 
 	function retreatImage() {
-		if (selectedImage > 0) {
-			selectedImage--;
-			goToImage();
+		if (selectedIndex > 0) {
+			goToImage(images[selectedIndex - 1].id);
 		}
 	}
 
-	function goToImage(imageIndex: number = selectedImage) {
+	function goToImage(id: string) {
 		const params = page.url.searchParams;
-		params.set('imageIndex', imageIndex.toString());
+		params.delete('imageIndex');
+		params.set('image', id);
 		const fullURL = `${page.url.pathname}?${params.toString()}`;
 		goto(fullURL, { replaceState: true });
 	}
@@ -75,6 +71,7 @@
 	function clearParams() {
 		const params = page.url.searchParams;
 		params.delete('imageIndex');
+		params.delete('image');
 		const fullURL = `${page.url.pathname}?${params.toString()}`;
 		goto(fullURL, { replaceState: true });
 	}
@@ -119,7 +116,7 @@
 			return;
 		}
 
-		if (selectedImage !== -1 && imagePathFromUrl(images[selectedImage]) === job.relativePath) {
+		if (selectedIndex !== -1 && imagePathFromUrl(images[selectedIndex].url) === job.relativePath) {
 			clearImage();
 		}
 
@@ -141,17 +138,13 @@
 	<LeftBar />
 	<WindowBody title="Picture library" subtitle={$isAdmin ? 'Pictures (Admin)' : 'Pictures'}>
 		{#if entries.length > 0}
-			{#each entries as entry (entry.type === 'image' ? entry.url : entry.name)}
+			{#each entries as entry (entry.type === 'image' ? entry.id : entry.name)}
 				{#if entry.type === 'image'}
 					<FileExplorerImage
 						src={entry.url}
 						name={imageName(entry.url)}
 						onDelete={$isAdmin ? () => askDelete(imagePathFromUrl(entry.url), imageName(entry.url)) : undefined}
-						onClick={() => {
-							const index = images.indexOf(entry.url);
-							selectedImage = index;
-							goToImage(index);
-						}}
+						onClick={() => goToImage(entry.id)}
 					/>
 				{:else}
 					<FileExplorerImage
@@ -167,7 +160,7 @@
 	</WindowBody>
 </Window>
 
-{#if selectedImage !== -1}
+{#if selectedIndex !== -1}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
@@ -176,7 +169,7 @@
 	>
 		<div class="h-fit w-fit" bind:this={modalContentRef}>
 			<FullSizeImage
-				src={images[selectedImage]}
+				src={images[selectedIndex].url}
 				alt="Full Size Image"
 				className="max-h-[80vh] max-w-[90vw]"
 				{clearImage}
@@ -184,7 +177,10 @@
 				{retreatImage}
 				onDelete={$isAdmin
 					? () =>
-							askDelete(imagePathFromUrl(images[selectedImage]), imageName(images[selectedImage]))
+							askDelete(
+								imagePathFromUrl(images[selectedIndex].url),
+								imageName(images[selectedIndex].url)
+							)
 					: undefined}
 			/>
 		</div>

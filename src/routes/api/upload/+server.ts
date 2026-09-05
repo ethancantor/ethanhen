@@ -1,5 +1,6 @@
 import { exists } from '$lib';
 import { requireAdmin } from '$lib/utils/server/require-admin';
+import { ensureImageId } from '$lib/utils/server/image-id';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import exifr from 'exifr';
@@ -67,6 +68,7 @@ export async function POST({ request }: { request: Request }) {
 			const fileDate =
 				exif.DateTimeOriginal ?? exif.CreateDate ?? exif.ModifyDate ?? new Date(Number(fileLastModified));
 			await fs.utimes(filePath, fileDate, fileDate);
+			await ensureImageId(filePath);
 		}
 	} catch (err) {
 		console.error('Error processing upload:', err);

@@ -1,4 +1,5 @@
 import { exists } from '$lib';
+import { ensureImageId } from '$lib/utils/server/image-id';
 import { UPLOAD_DIR } from '$lib/utils/server/upload-path';
 import { error, json } from '@sveltejs/kit';
 import fs from 'fs/promises';
@@ -44,7 +45,8 @@ export async function GET({ url }: { url: URL }): Promise<Response> {
 
 			const relativePath = path.relative(UPLOAD_DIR, path.join(fullPath, file.name));
 			const imageUrl = `${url.origin}/api/images/${encodeURIComponent(relativePath)}`;
-			entries.push({ type: 'image' as const, url: imageUrl });
+			const id = await ensureImageId(path.join(fullPath, file.name));
+			entries.push({ type: 'image' as const, url: imageUrl, id });
 		}
 
 		return json({ entries }, { status: 200 });

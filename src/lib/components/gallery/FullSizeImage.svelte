@@ -70,9 +70,10 @@
 	hasTopBar={false}
 	bodyDirection="column"
 	hasMaxWidth={false}
+	bodyStyle="margin:1;padding:0"
 >
 	<img
-		class="h-full w-full object-contain p-4 md:p-8 {className}"
+		class="block h-full w-full object-contain p-1 {className}"
 		{src}
 		{alt}
 		style="image-orientation: from-image;"

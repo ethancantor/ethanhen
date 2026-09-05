@@ -13,4 +13,5 @@ export async function exists(path: string): Promise<boolean> {
 
 export enum ATTRIBUTES {
 	ORDER = 'user.order',
+	ID = 'user.imageId'
 }
