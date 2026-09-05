@@ -3,10 +3,15 @@ import { ATTRIBUTES } from './fs-extensions';
 
 export async function ensureImageId(filePath: string): Promise<string> {
 	try {
-		return (await getAttribute(filePath, ATTRIBUTES.ID)).toString();
+		const existing = (await getAttribute(filePath, ATTRIBUTES.ID)).toString();
+		if (existing) {
+			return existing;
+		}
 	} catch {
-		const id = crypto.randomUUID();
-		await setAttribute(filePath, ATTRIBUTES.ID, id);
-		return id;
+		// missing attribute
 	}
+
+	const id = crypto.randomUUID();
+	await setAttribute(filePath, ATTRIBUTES.ID, id);
+	return id;
 }
