@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { showFolder, showPassword } from '$lib/utils/client/writables';
+	import { showFolder } from '$lib/utils/client/writables';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import PasswordModal from '../uploads/PasswordModal.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 	import { apiFetch } from '$lib/utils/client/APIFetch';
+	import { requestAdmin } from '$lib/utils/client/admin';
 
 	let text = $state('New Folder');
 	let inputElement: HTMLInputElement | null = null;
@@ -20,7 +20,7 @@
 	async function onSubmit() {
 		const isAdmin = await apiFetch.checkAdmin();
 		if (!isAdmin) {
-			showPassword.set(true);
+			requestAdmin(onSubmit);
 			return;
 		}
 
@@ -36,17 +36,12 @@
 
 		if (response.ok) {
 			showFolder.set(false);
-			showPassword.set(false);
 			text = 'New Folder';
 			inputElement?.blur();
 			await invalidateAll();
 		}
 	}
 </script>
-
-{#if $showPassword}
-	<PasswordModal onSuccess={onSubmit} />
-{/if}
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->

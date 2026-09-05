@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { DefaultUpload, UploadWithFiles, PasswordModal } from '$lib';
+	import { DefaultUpload, UploadWithFiles } from '$lib';
 	import type { UploadItem } from '$lib/types/upload';
+	import { requestAdmin } from '$lib/utils/client/admin';
 	import { apiFetch } from '$lib/utils/client/APIFetch';
 	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
-	import { showPassword } from '$lib/utils/client/writables';
 
 	let uploadItems: UploadItem[] = $state([]);
 
@@ -47,7 +47,7 @@
 	async function handleFileUpload() {
 		const isAdmin = await apiFetch.checkAdmin();
 		if (!isAdmin) {
-			showPassword.set(true);
+			requestAdmin(handleFileUpload);
 			return;
 		}
 
@@ -55,10 +55,6 @@
 		await Promise.allSettled(pendingItems.map(uploadItem));
 	}
 </script>
-
-{#if $showPassword}
-	<PasswordModal onSuccess={handleFileUpload} />
-{/if}
 
 {#if uploadItems.length > 0}
 	<UploadWithFiles {handleFileDrop} {uploadItems} {removeFile} />

@@ -9,7 +9,12 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<li role="menuitem" tabindex="0" class="flex flex-row items-center gap-2" onclick={onClick}>
+<li
+	role="menuitem"
+	tabindex="0"
+	class="flex flex-row items-center gap-2 {onClick ? 'cursor-pointer' : ''}"
+	onclick={onClick}
+>
 	{#if children}
 		{@render children()}
 	{/if}

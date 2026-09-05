@@ -1,5 +1,4 @@
 import type { ImageAPIResponse } from '$lib/types/api';
-import { apiFetch } from '$lib/utils/client/APIFetch.js';
 import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 
 export const ssr = false;
@@ -24,16 +23,7 @@ export async function load({ url, fetch }) {
 		console.error('Error fetching images in load function:', e);
 	}
 
-	let isAdmin = false;
-
-	try {
-		isAdmin = await apiFetch.checkAdmin();
-	} catch (e) {
-		console.error('Error checking admin status:', e);
-	}
-
 	return {
-		files,
-		isAdmin
+		files
 	};
 }

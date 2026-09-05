@@ -1,4 +1,7 @@
 <script lang="ts">
+	import MenuBarItem from './MenuBarItem.svelte';
+	import { toggleAdmin } from '$lib/utils/client/admin';
+	import { isAdmin } from '$lib/utils/client/writables';
 	import type { Snippet } from 'svelte';
 
 	const { children, hasIcons = true }: { children?: Snippet; hasIcons?: boolean } = $props();
@@ -8,6 +11,7 @@
 	{#if children}
 		{@render children()}
 	{/if}
+	<MenuBarItem onClick={() => void toggleAdmin()}>{$isAdmin ? 'Logout' : 'Login'}</MenuBarItem>
 	{#if hasIcons}
 		<div
 			class="absolute top-0 right-0 me-2 flex translate-y-[50%] flex-row items-center gap-1 overflow-hidden md:gap-5"

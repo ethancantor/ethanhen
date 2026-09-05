@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { showFolder, showPassword } from '$lib/utils/client/writables';
+	import { cancelAdminRequest } from '$lib/utils/client/admin';
 	import { onMount } from 'svelte';
 	import { Window } from '$lib';
 	import { cookieFetch } from '$lib/utils/client/CookieFetch.svelte';
 
-	let { onSuccess }: { onSuccess: (password: string) => Promise<void> } = $props();
+	let { onSuccess }: { onSuccess: () => Promise<void> } = $props();
 
 	let passwordInput = $state('');
 	let error = $state<string | null>(null);
@@ -12,6 +12,10 @@
 	let divElement: HTMLDivElement | null = null;
 
 	function handleKeyDown(event: KeyboardEvent) {
+		if (event.ctrlKey || event.altKey || event.metaKey) {
+			return;
+		}
+
 		if (event.key === 'Enter') {
 			handlePasswordSubmit();
 		} else if (event.key === 'Backspace') {
@@ -30,10 +34,8 @@
 		);
 
 		if (response.ok) {
-			await onSuccess(passwordInput);
-			// // console.log('Password accepted');
+			await onSuccess();
 			error = null;
-			showPassword.set(false);
 		} else {
 			error = 'incorrect password. click this message to see the hint and try again.';
 			passwordInput = '';
@@ -49,8 +51,7 @@
 	});
 
 	function onClose() {
-		showPassword.set(false);
-		showFolder.set(false);
+		cancelAdminRequest();
 		error = null;
 		passwordInput = '';
 		if (divElement) {
@@ -59,7 +60,7 @@
 	}
 </script>
 
-<div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit translate-x-[-50%]">
+<div class="fixed inset-0 top-[30%] left-[50%] z-[100] h-fit w-fit translate-x-[-50%]">
 	<Window
 		hasMenuBar={false}
 		hasTopBar={false}

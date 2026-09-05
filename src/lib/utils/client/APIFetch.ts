@@ -15,6 +15,16 @@ class APIFetch {
 			return false;
 		}
 	}
+
+	public async revokeAdmin(): Promise<void> {
+		const response = await cookieFetch.fetchWithKey('/api/session', {
+			method: 'PATCH'
+		});
+
+		if (!response.ok) {
+			console.error('Error revoking admin:', response.statusText);
+		}
+	}
 }
 
 export const apiFetch = new APIFetch();

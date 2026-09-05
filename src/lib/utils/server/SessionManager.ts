@@ -80,6 +80,16 @@ class SessionManager {
         return session;
     }
 
+    public revokeAdmin(id: string): Session | undefined {
+        this.cleanUpExpiredSessions();
+
+        const session = this.getSession(id);
+        if (session) {
+            session.isAdmin = false;
+        }
+        return session;
+    }
+
     private cleanUpExpiredSessions(): void {
         this.sessions = this.sessions.filter((s) => s.expiresAt > new Date());
         // // console.log(`Cleaned up expired sessions, remaining: ${this.sessions.length}`);

@@ -6,6 +6,10 @@
 	let input = $state('');
 
 	function handleKeyDown(event: KeyboardEvent) {
+		if (event.ctrlKey || event.altKey || event.metaKey) {
+			return;
+		}
+
 		if (event.key === 'Enter') {
 			onSubmit(input, (newInput: string) => (input = newInput));
 		} else if (event.key === 'Backspace') {
@@ -14,8 +18,6 @@
 			input += event.key;
 		}
 	}
-
-	const code = 'const add = (a: number, b: number) => a + b;';
 </script>
 
 <div class="fixed inset-0 top-[30%] left-[50%] h-fit w-fit max-w-[90vw] translate-x-[-50%]">
